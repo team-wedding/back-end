@@ -8,7 +8,7 @@ const authToken = async (req,res,next) => {
     if(!userInfo){
       return res.status(StatusCodes.UNAUTHORIZED).json({message:'유효하지 않은 토큰'})
     }
-	  res.header('Authorization', `Bearer ${accessToken}`); // 추가부분
+	  res.header('authorization', `Bearer ${accessToken}`); // 추가부분
     req.userInfo = userInfo
     next()
   }catch(err){

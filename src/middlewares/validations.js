@@ -16,7 +16,6 @@ const signupValidate = [
   body('name').isString(),
   body('email').isEmail(),
   body('password').isString().isLength({min: 4}),
-  body('gender').optional().isIn(['male','femaile']),
   body('provider').isString(),
   validate
 ];

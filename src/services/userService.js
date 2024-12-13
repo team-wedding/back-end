@@ -70,7 +70,6 @@ const deleteUser = async(email, password) => {
   try{
     const userInfo = await userRepository.selectUser(email)
     if(await authUtil.isMatchPassword(userInfo, password)){
-      await userRepository.createDelUser(userInfo)
       await userRepository.deleteUser(userInfo)
       return true;
     }
@@ -86,7 +85,6 @@ const myPage = async(email) => {
     return {
       id: userInfo.id,
       email: userInfo.email,
-      gender: userInfo.gender,
       createdAt: userInfo.createdAt,
       updatedAt: userInfo.updatedAt,
       provider: userInfo.provider

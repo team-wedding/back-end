@@ -15,10 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(45),
       allowNull: false,
     },
-    gender: {
-      type: DataTypes.STRING(10),
-      allowNull: true,
-    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -43,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   },
   {
-    tableName: 'user',
+    tableName: 'users',
     timestamps: true,
   });
   return User

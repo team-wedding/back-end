@@ -8,6 +8,5 @@ db.Sequelize = Sequelize;
 
 db.User = require('./user')(sequelize, DataTypes)
 db.Token = require('./token')(sequelize, DataTypes)
-db.DelUser = require('./deluser')(sequelize, DataTypes)
 
 module.exports = db;
