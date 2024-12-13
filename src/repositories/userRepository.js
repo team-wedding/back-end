@@ -1,5 +1,4 @@
 const { User } = require('../models');
-const { DelUser } = require('../models')
 
 const selectUser = async (email) => {
   try{
@@ -15,7 +14,6 @@ const createUser = async (userInfo) => {
     await User.create({
       name: userInfo.name,
       email: userInfo.email,
-      gender: userInfo.gender,
       hashPassword: userInfo.hashPassword,
       provider: userInfo.provider,
       salt: userInfo.salt
@@ -49,28 +47,9 @@ const updateUser = async (id, newHashPassword, salt) => {
   }
 };
 
-const createDelUser = async (userInfo) => {
-  try{
-    await DelUser.create({
-      id: userInfo.id,
-      email: userInfo.email,
-      name: userInfo.name,
-      gender: userInfo.gender,
-      provider: userInfo.provider,
-      createdAt: userInfo.createdAt,
-      updatedAt: userInfo.updatedAt,
-      deletedAt: userInfo.deletedAt,
-    });
-    return true
-  }catch(err){
-    throw new Error('userRepository createDelUser err', err)
-  }
-};
-
 module.exports = {
   selectUser,
   deleteUser,
   updateUser,
-  createDelUser,
   createUser
 }
