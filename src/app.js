@@ -19,5 +19,7 @@ sequelize.sync({ force: false })
   });
 
 const userRouter = require('./routes/userRouter');
+const invitationRouter = require('./routes/invitationRouter');
 
 app.use('/api/users', userRouter);
+app.use('/api/invitations', invitationRouter);
