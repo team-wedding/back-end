@@ -10,6 +10,7 @@ const authToken = async (req,res,next) => {
     }
 	  res.header('authorization', `Bearer ${accessToken}`); // 추가부분
     req.userInfo = userInfo
+    req.userId = userInfo.id; // userId를 req.userId에 저장
     next()
   }catch(err){
     console.log(err)
@@ -25,6 +26,7 @@ const refreshToken = async (req,res,next) => {
     }
     const userInfo = await verifyToken(refreshToken)
     req.userInfo = userInfo
+    req.userId = userInfo.id; // userId를 req.userId에 저장
     next()
   }catch(err){
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'서버 에러'})

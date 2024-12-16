@@ -1,3 +1,5 @@
+const { Timestamp } = require("firebase-admin/firestore");
+
 module.exports = (sequelize, DataTypes) => {
     const Invitation = sequelize.define('Invitation', {
       id: {
@@ -81,6 +83,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+      }
     });
   
     return Invitation;

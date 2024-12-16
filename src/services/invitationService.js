@@ -1,7 +1,6 @@
 const invitationRepository = require('../repositories/invitationRepository');
-const authUtil = require('../utils/authUtil');
 
-const postInvitation = async (userId, invitationData) => {
+const createInvitation = async (userId, invitationData) => {
     try {
         const newInvitation = await invitationRepository.createInvitation(invitationData);
         return { id: newInvitation.id };
@@ -10,7 +9,7 @@ const postInvitation = async (userId, invitationData) => {
     }
 };
 
-const getInvitation = async (invitationId) => {
+const getInvitationById = async (invitationId) => {
     try {
         const invitation = await invitationRepository.getInvitationById(invitationId);
         if (!invitation) {
@@ -22,7 +21,7 @@ const getInvitation = async (invitationId) => {
     }
 };
 
-const putInvitation = async (userId, invitationId, updatedData) => {
+const updateInvitation = async (userId, invitationId, updatedData) => {
     try {
         const invitation = await invitationRepository.getInvitationById(invitationId);
         if (!invitation || invitation.userId !== userId) {
@@ -48,7 +47,7 @@ const deleteInvitation = async (userId, invitationId) => {
     }
 };
 
-const getInvitations = async (userId) => {
+const getInvitationsByUserId = async (userId) => {
     try {
         const invitations = await invitationRepository.getInvitationsByUserId(userId);
         return invitations || [];
@@ -58,9 +57,9 @@ const getInvitations = async (userId) => {
 };
 
 module.exports = {
-    postInvitation,
-    getInvitation,
-    putInvitation,
+    createInvitation,
+    getInvitationById,
+    updateInvitation,
     deleteInvitation,
-    getInvitations,
+    getInvitationsByUserId,
 };
