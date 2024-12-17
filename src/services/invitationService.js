@@ -2,7 +2,7 @@ const invitationRepository = require('../repositories/invitationRepository');
 
 const createInvitation = async (userId, invitationData) => {
     try {
-        const newInvitation = await invitationRepository.createInvitation(invitationData);
+        const newInvitation = await invitationRepository.createInvitation({...invitationData, userId});
         return { id: newInvitation.id };
     } catch (err) {
         throw new Error('invitationService postInvitation Err', err);
