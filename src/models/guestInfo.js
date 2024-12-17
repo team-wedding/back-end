@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const GuestInfo = sequelize.define('GuestInfo', {
+  const GuestInfo = sequelize.define(
+    "GuestInfo",
+    {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -9,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'invitations',  
-          key: 'id',
+          model: "invitations",
+          key: "id",
         },
       },
       name: {
@@ -38,8 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-);
-  
-    return GuestInfo;
-  };
-  
+    {
+      tableName: "guest_info",
+      timestamps: false,
+    }
+  );
+
+  return GuestInfo;
+};
