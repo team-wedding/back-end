@@ -1,4 +1,4 @@
-const { GuestInfo } = require("../models/attendance");
+const { GuestInfo } = require("../models");
 
 // 전체 참석 정보 조회
 const findAllAttendances = async () => {
