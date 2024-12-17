@@ -3,19 +3,26 @@ const invitationService = require('../services/invitationService');
 
 const postInvitation = async (req, res) => {
     try {
-        const invitationData = req.body;
-        const userInfo = req.userInfo; 
+        const invitationData = req.body; // 요청 본문에서 청첩장 데이터를 추출
+        const userInfo = req.userInfo; // 토큰에서 사용자 정보 추출
         const result = await invitationService.createInvitation(userInfo.id, invitationData);
-    
+
         if (result) {
-          return res.status(StatusCodes.CREATED).json({ message: '청첩장이 생성되었습니다.', invitationId: result.id });
+            return res.status(StatusCodes.CREATED).json({ 
+                message: '청첩장이 생성되었습니다.'
+            });
         }
-        return res.status(StatusCodes.BAD_REQUEST).json({ message: '청첩장 생성 실패.' });
+        return res.status(StatusCodes.BAD_REQUEST).json({ 
+            message: '청첩장 생성 실패.' 
+        });
+        
     } catch (err) {
-        console.error(err);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: '서버 에러' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+            message: '서버 에러' 
+        });
     }
 };
+ 
 
 const getInvitation = async (req, res) => {
     try {
