@@ -2,9 +2,9 @@ const attendanceRepository = require("../repositories/attendanceRepository");
 // const authUtil = require("../utils/authUtil");
 
 // 1. 전체 참석 정보 조회
-const getAllAttendances = async () => {
+const getAllAttendances = async (userId) => {
   try {
-    return await attendanceRepository.findAllAttendances();
+    return await attendanceRepository.findAllAttendances(userId);
   } catch (err) {
     throw new Error("Error occurred while bring all attendance data", err);
   }
@@ -13,7 +13,7 @@ const getAllAttendances = async () => {
 // 2. 개인 참석 정보 조회
 const getMyAttendance = async (id) => {
   try {
-    return await attendanceRepository.findAllAttendances(id);
+    return await attendanceRepository.findAttendanceById(id);
   } catch (err) {
     throw new Error(
       "Error occurred while bring individual attendance data",

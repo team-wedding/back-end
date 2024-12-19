@@ -4,6 +4,7 @@ const attendanceService = require("../services/attendanceService");
 // 1. 전체 참석 정보 조회
 const getAllAttendances = async (req, res) => {
   try {
+    const userInfo = req.userInfo; // 토큰에서 사용자 정보 추출
     const allAttendances = await attendanceService.getAllAttendances();
     res.status(StatusCodes.OK).json(allAttendances);
   } catch (err) {
@@ -32,24 +33,34 @@ const getMyAttendance = async (req, res) => {
 
 // 3. 개인 참석 정보 등록
 const postMyAttendance = async (req, res) => {
-  const { invitationId, name, contact, companions, isGroomSide, isBrideSide } =
-    req.body;
+  const {
+    invitationId,
+    name,
+    contact,
+    attendance,
+    isGroomSide,
+    isBrideSide,
+    companions,
+  } = req.body;
 
   try {
     await attendanceService.postMyAttendance({
       invitationId,
       name,
       contact,
-      companions,
+      attendance,
       isGroomSide,
       isBrideSide,
+      companions,
     });
     res
       .status(StatusCodes.CREATED)
       .json({ message: "결혼식 참석 여부가 [참석]으로 등록되었습니다." });
   } catch (err) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: err.message && "서버 에러" });
   }
 };
 

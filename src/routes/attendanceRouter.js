@@ -15,9 +15,9 @@ router.get("/", authToken, getAllAttendances);
 router.get("/:id", getMyAttendance);
 
 // 3. 개인 참석 여부 등록
-router.get("/:id", postMyAttendance);
+router.post("/", postMyAttendance);
 
 // 4. 개인 참석 여부 삭제
-router.get("/:id", deleteMyAttendance);
+router.delete("/:id", deleteMyAttendance);
 
 module.exports = router;
