@@ -1,4 +1,5 @@
 const { Timestamp } = require("firebase-admin/firestore");
+const { STRING } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
     const Invitation = sequelize.define('Invitation', {
@@ -80,6 +81,38 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       brideMotherContact: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
+      weddingTime: {
+        type: DataTypes.STRING(10),
+        allowNull: false,
+      },
+      groomFatherAlive: {
+        type: DataTypes.TINYINT(1),
+        allowNull: false,
+      },
+      groomMotherAlive: {
+        type: DataTypes.TINYINT(1),
+        allowNull: false,
+      },
+      brideFatherAlive: {
+        type: DataTypes.TINYINT(1),
+        allowNull: false,
+      },
+      brideMotherAlive: {
+        type: DataTypes.TINYINT(1),
+        allowNull: false,
+      },
+      font: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
+      weight: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
+      backgroundColor: {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
