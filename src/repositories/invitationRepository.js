@@ -21,6 +21,14 @@ const createInvitation = async (invitationData) => {
       groomMotherContact: invitationData.groomMotherContact,
       brideFatherContact: invitationData.brideFatherContact,
       brideMotherContact: invitationData.brideMotherContact,
+      weddingTime: invitationData.weddingTime,
+      groomFatherAlive: invitationData.groomFatherAlive,
+      groomMotherAlive: invitationData.groomMotherAlive,
+      brideFatherAlive: invitationData.brideFatherAlive,
+      brideMotherAlive: invitationData.brideMotherAlive,
+      font: invitationData.font,
+      weight: invitationData.weight,
+      backgroundColor: invitationData.backgroundColor
     });
     return newInvitation;
   } catch (err) {
