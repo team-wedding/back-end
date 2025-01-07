@@ -1,10 +1,12 @@
 const { GuestInfo } = require("../models");
 
 // 전체 참석 정보 조회
-const findAllAttendances = async () => {
+const findAllAttendances = async (invitationId) => {
   try {
     console.log("Fetching all attendance records...");
-    const result = await GuestInfo.findAll();
+    const result = await GuestInfo.findAll({
+      where: { invitationId },
+    });
     console.log("All attendance records fetched:", result);
     return result;
   } catch (error) {

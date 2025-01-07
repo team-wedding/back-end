@@ -5,7 +5,10 @@ const attendanceService = require("../services/attendanceService");
 const getAllAttendances = async (req, res) => {
   try {
     const userInfo = req.userInfo; // 토큰에서 사용자 정보 추출
-    const allAttendances = await attendanceService.getAllAttendances();
+    const invitationId = userInfo.id;
+    const allAttendances = await attendanceService.getAllAttendances(
+      invitationId
+    );
     res.status(StatusCodes.OK).json(allAttendances);
   } catch (err) {
     console.error(err);

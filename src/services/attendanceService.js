@@ -2,9 +2,9 @@ const attendanceRepository = require("../repositories/attendanceRepository");
 // const authUtil = require("../utils/authUtil");
 
 // 1. 전체 참석 정보 조회
-const getAllAttendances = async (userId) => {
+const getAllAttendances = async (invitationId) => {
   try {
-    return await attendanceRepository.findAllAttendances(userId);
+    return await attendanceRepository.findAllAttendances(invitationId);
   } catch (err) {
     throw new Error("Error occurred while bring all attendance data", err);
   }
