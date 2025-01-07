@@ -22,7 +22,6 @@ const postInvitation = async (req, res) => {
         });
     }
 };
- 
 
 const getInvitation = async (req, res) => {
     try {
@@ -42,17 +41,21 @@ const getInvitation = async (req, res) => {
 const putInvitation = async (req, res) => {
     try {
         const invitationId = req.params.id;
-        const userInfo = req.userInfo;
+        const userInfo = req.userInfo; // 토큰에서 가져온 userInfo
         const updatedData = req.body;
-    
-        const isUpdated = await invitationService.updateInvitation(invitationId, userInfo.id, updatedData);
-    
+
+        if (!userInfo || !userInfo.id) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ message: '토큰이 없습니다.' });
+        }
+
+        const isUpdated = await invitationService.updateInvitation(userInfo.id, invitationId, updatedData);
+
         if (isUpdated) {
-          return res.status(StatusCodes.OK).json({ message: '청첩장이 수정되었습니다.' });
+            return res.status(StatusCodes.OK).json({ message: '청첩장이 수정되었습니다.' });
         }
         return res.status(StatusCodes.BAD_REQUEST).json({ message: '청첩장 수정 실패.' });
     } catch (err) {
-        console.error(err);
+        console.error(err.message);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: '서버 에러' });
     }
 };
@@ -61,8 +64,12 @@ const deleteInvitation = async (req, res) => {
     try {
         const invitationId = req.params.id;
         const userInfo = req.userInfo;
+
+        if (!userInfo || !userInfo.id) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ message: '토큰이 없습니다.' });
+        }
     
-        const isDeleted = await invitationService.deleteInvitation(invitationId, userInfo.id);
+        const isDeleted = await invitationService.deleteInvitation(userInfo.id, invitationId);
     
         if (isDeleted) {
           return res.status(StatusCodes.OK).json({ message: '청첩장이 삭제되었습니다.' });
