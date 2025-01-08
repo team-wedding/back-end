@@ -32,7 +32,7 @@ const createInvitation = async (invitationData) => {
     });
     return newInvitation;
   } catch (err) {
-    throw new Error('invitationRepository createInvitation err', err);
+    throw new Error('청첩장 등록 에러', err);
   }
 };
 
@@ -44,7 +44,7 @@ const getInvitationById = async (invitationId) => {
     });
     return invitation;
   } catch (err) {
-    throw new Error('invitationRepository getInvitationById err', err);
+    throw new Error('청첩장 조회 에러', err);
   }
 };
 
@@ -56,18 +56,18 @@ const getInvitationsByUserId = async (userId) => {
     });
     return invitations;
   } catch (err) {
-    throw new Error('invitationRepository getInvitationsByUserId err', err);
+    throw new Error('청첩장 조회 에러', err);
   }
 };
 
 const updateInvitation = async (invitationId, updatedData) => {
   try {
-    await Invitation.update(updatedData, {
-      where: { id: invitationId },
-    });
-    return true;
+      const [affectedRows] = await Invitation.update(updatedData, {
+        where: { id: invitationId },
+      });
+      return affectedRows > 0;
   } catch (err) {
-    throw new Error('invitationRepository updateInvitation err', err);
+      throw new Error('청첩장 수정 에러');
   }
 };
 
@@ -78,7 +78,7 @@ const deleteInvitation = async (invitationId) => {
     });
     return true;
   } catch (err) {
-    throw new Error('invitationRepository deleteInvitation err', err);
+    throw new Error('청첩장 삭제 에러', err);
   }
 };
 
