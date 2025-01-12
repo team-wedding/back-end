@@ -9,16 +9,18 @@ const sequelize = new Sequelize(config.development as any);
 
 const db: any = {};
 
-// 모델 
-db.User = UserModel(sequelize, DataTypes);
-db.Token = TokenModel(sequelize, DataTypes);
+// 모델
 db.GuestInfo = GuestInfoModel(sequelize, DataTypes);
 
 // Invitation은 클래스로 정의했기 때문에 initialize 메소드 활용
 InvitationModel.initialize(sequelize);
 db.Invitation = InvitationModel;
+UserModel.initialize(sequelize);
+db.User = UserModel;
+TokenModel.initialize(sequelize);
+db.Token = TokenModel;
 
-// 테이블 간 관계
+//테이블 간 관계
 db.User.hasMany(db.Invitation, { foreignKey: 'userId' });
 db.Invitation.belongsTo(db.User, { foreignKey: 'userId' });
 db.Invitation.hasMany(db.GuestInfo, { foreignKey: 'invitationId' });
