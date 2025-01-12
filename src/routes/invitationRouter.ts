@@ -1,4 +1,4 @@
-import express, {Request, Response, NextFunction} from "express";
+import express, {Request, Response, NextFunction} from 'express';
 const router = express.Router();
 import {postInvitation, getInvitation, putInvitation, deleteInvitation, getInvitations} from "../controllers/invitationController"
 import {authToken} from "../middlewares/authToken";

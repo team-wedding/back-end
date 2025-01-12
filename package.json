@@ -9,12 +9,13 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.4",
     "nodemon": "^3.1.7",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "ts-node": "^10.9.2"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "node src/app.js",
-    "start:dev": "nodemon src/app.js"
+    "build": "tsc -p .",
+    "start": "node dist/app.js",
+    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

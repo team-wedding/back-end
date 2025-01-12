@@ -1,8 +1,9 @@
-const userRepository = require('../repositories/userRepository')
-const tokenRepository = require('../repositories/tokenRepository')
-const authUtil = require('../utils/authUtil')
+import * as userRepository from '../repositories/userRepository';
+import * as tokenRepository from '../repositories/tokenRepository';
+import * as authUtil from '../utils/authUtil';
+import { User as IUser } from '../interfaces/user.interface';
 
-const signup = async (userInfo) => {
+export const signup = async (userInfo:any):Promise<boolean> => {
   try{
     if(await userRepository.selectUser(userInfo.email)) {
       return false
@@ -11,11 +12,11 @@ const signup = async (userInfo) => {
     await userRepository.createUser(userInfo)
     return true;
   }catch(err){
-    throw new Error('userService signup err', err)
+    throw new Error(`userService signup err: ${(err as Error).message}`)
   }
 };
 
-const login = async (email, password) => {
+export const login = async (email: string, password: string):Promise<any> => {
   try{
     const userInfo = await userRepository.selectUser(email);
     if(userInfo && await authUtil.isMatchPassword(userInfo, password)){
@@ -29,29 +30,29 @@ const login = async (email, password) => {
     }
     return false
   }catch(err){
-    throw new Error('userService login Err', err)
+    throw new Error(`userService login Err: ${(err as Error).message}`)
   }
 };
 
-const logout = async(userInfo) => {
+export const logout = async(userInfo: Record<string, any>) : Promise<boolean> => {
   try{
     await tokenRepository.deleteToken(userInfo.id)
     return true
   }catch(err){
-    return "오류나면 어쩔건데"
+    throw new Error(`userService logout Err: ${(err as Error).message}`);
   }
 }
 
-const updateAccessToken = async(userInfo) => {
+export const updateAccessToken = async(userInfo: IUser) : Promise<string>=> {
   try{
     const accessToken = await authUtil.createAccessToken(userInfo)
     return accessToken;
   }catch(err){
-    throw new Error('userService updateAccessToken Err', err)
+    throw new Error(`userService updateAccessToken Err: ${(err as Error).message}`)
   }
 }
 
-const changePassword = async(email, password, newPassword) => {
+export const changePassword = async(email: string, password: string, newPassword: string) : Promise<boolean> => {
   try{
     const userInfo = await userRepository.selectUser(email);
     if(await authUtil.isMatchPassword(userInfo, password) && password !== newPassword){
@@ -62,11 +63,11 @@ const changePassword = async(email, password, newPassword) => {
     }
     return false
   }catch(err){
-    throw new Error('userService changePassword Err', err)
+    throw new Error(`userService changePassword Err: ${(err as Error).message}`)
   }
 }
 
-const deleteUser = async(email, password) => {
+export const deleteUser = async(email: string, password:string) : Promise<boolean> => {
   try{
     const userInfo = await userRepository.selectUser(email)
     if(await authUtil.isMatchPassword(userInfo, password)){
@@ -75,30 +76,22 @@ const deleteUser = async(email, password) => {
     }
     return false
   }catch(err){
-    throw new Error('userService deleteUser Err', err)
+    throw new Error(`userService deleteUser Err: ${(err as Error).message}`)
   }
 }
 
-const myPage = async(email) => {
+export const myPage = async(email: string) : Promise<any> => {
   try{
-    const userInfo = await userRepository.selectUser(email)
-    return {
+    let userInfo = await userRepository.selectUser(email)
+    userInfo = {...userInfo,
       id: userInfo.id,
       email: userInfo.email,
       createdAt: userInfo.createdAt,
       updatedAt: userInfo.updatedAt,
       provider: userInfo.provider
     }
+    return userInfo
   }catch(err){
-    throw new Error('userService myPage Err', err)
+    throw new Error(`userService myPage Err: ${(err as Error).message}`)
   }
 }
-module.exports = {
-  signup,
-  login,
-  logout,
-  updateAccessToken,
-  changePassword,
-  deleteUser,
-  myPage
-};

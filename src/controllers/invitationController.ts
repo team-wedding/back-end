@@ -2,11 +2,8 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as invitationService from "../services/invitationService";
 import { InvitationData } from "../interfaces/invitationData";
+import { User as IUser } from '../interfaces/user.interface';
 
-// User 타입 정의 
-interface UserInfo {
-    id: number;
-};
 
 const validateIdParam = (param: string): number => {
     const id = Number(param);
@@ -19,10 +16,10 @@ const validateIdParam = (param: string): number => {
 export const postInvitation: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const invitationData: InvitationData = req.body; // 요청 본문에서 청첩장 데이터를 추출
-        const userInfo: UserInfo = req.userInfo; // 토큰에서 사용자 정보 추출
-        invitationData.userId = userInfo.id; // invitationData에 userId 설정
+        const userInfo: IUser = req.userInfo; // 토큰에서 사용자 정보 추출
+        invitationData.userId = userInfo.id as number; // invitationData에 userId 설정
 
-        const result = await invitationService.createInvitation(userInfo.id, invitationData);
+        const result = await invitationService.createInvitation(userInfo.id as number, invitationData);
 
         if (result) {
             res.status(StatusCodes.CREATED).json({ 
@@ -58,7 +55,7 @@ export const getInvitation: RequestHandler = async (req: Request, res: Response,
 export const putInvitation: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const invitationId: number = validateIdParam(req.params.id);
-        const userInfo: UserInfo = req.userInfo; // 토큰에서 가져온 userInfo
+        const userInfo: IUser = req.userInfo; // 토큰에서 가져온 userInfo
         const updatedData: InvitationData = req.body;
 
         if (!userInfo || !userInfo.id) {
@@ -82,7 +79,7 @@ export const putInvitation: RequestHandler = async (req: Request, res: Response,
 export const deleteInvitation: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const invitationId: number = validateIdParam(req.params.id);
-        const userInfo: UserInfo = req.userInfo;
+        const userInfo: IUser = req.userInfo;
 
         if (!userInfo || !userInfo.id) {
             res.status(StatusCodes.UNAUTHORIZED).json({ message: '토큰이 없습니다.' });
@@ -104,8 +101,8 @@ export const deleteInvitation: RequestHandler = async (req: Request, res: Respon
 
 export const getInvitations: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userInfo: UserInfo = req.userInfo;
-        const invitations = await invitationService.getInvitationsByUserId(userInfo.id);
+        const userInfo: IUser = req.userInfo;
+        const invitations = await invitationService.getInvitationsByUserId(userInfo.id as number);
 
         if (invitations && invitations.length > 0) {
             res.status(StatusCodes.OK).json(invitations);
