@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { InvitationData } from "../interfaces/invitationData";
+import { InvitationData } from "../interfaces/invitation.interface";
 
 // Optional 속성 정의 (id와 자동 생성 날짜는 필수가 아님)
 interface InvitationCreationAttributes extends Partial<InvitationData> {

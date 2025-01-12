@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as invitationService from "../services/invitationService";
-import { InvitationData } from "../interfaces/invitationData";
+import { InvitationData } from "../interfaces/invitation.interface";
 import { User as IUser } from '../interfaces/user.interface';
-
 
 const validateIdParam = (param: string): number => {
     const id = Number(param);

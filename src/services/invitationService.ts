@@ -1,5 +1,5 @@
 import * as invitationRepository from '../repositories/invitationRepository';
-import { InvitationData } from '../interfaces/invitationData';
+import { InvitationData } from '../interfaces/invitation.interface';
 
 type UpdateInvitation = Partial<Omit<InvitationData, 'id' | 'userId'>>;
 

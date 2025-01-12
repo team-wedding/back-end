@@ -2,7 +2,7 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 import {
   attendanceData,
   AttendanceCreationAttributes,
-} from "../interfaces/attendanceData";
+} from "../interfaces/attendance.interface";
 
 // Attendance 모델 정의
 class GuestInfo

@@ -1,5 +1,5 @@
 import db from "../models";
-import { attendanceData } from "../interfaces/attendanceData";
+import { attendanceData } from "../interfaces/attendance.interface";
 import GuestInfo from "../models/guestInfo";
 
 // 1. 전체 참석 정보 조회

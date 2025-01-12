@@ -1,5 +1,5 @@
 import db from '../models';
-import { InvitationData } from '../interfaces/invitationData';
+import { InvitationData } from '../interfaces/invitation.interface';
 
 export const createInvitation = async (invitationData: InvitationData) => {
   try {

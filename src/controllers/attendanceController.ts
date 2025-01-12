@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as attendanceService from "../services/attendanceSerivce";
-import { attendanceData, UserInfo } from "../interfaces/attendanceData";
+import { attendanceData } from "../interfaces/attendance.interface";
+import { User as IUser } from '../interfaces/user.interface';
 
 // 1. 전체 참석 정보 조회
 export const getAllAttendances = async (
@@ -9,14 +10,14 @@ export const getAllAttendances = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userInfo: UserInfo = req.userInfo; // 토큰에서 사용자 정보 추출
+    const userInfo: IUser = req.userInfo; // 토큰에서 사용자 정보 추출
 
     if (!userInfo) {
       res.status(StatusCodes.UNAUTHORIZED).json({ message: "인증 실패" });
       return;
     }
 
-    const invitationId = userInfo.id;
+    const invitationId = userInfo.id as number;
     const allAttendances = await attendanceService.getAllAttendances(
       invitationId
     );

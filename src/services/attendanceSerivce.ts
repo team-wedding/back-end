@@ -1,5 +1,5 @@
 import * as attendanceRepository from "../repositories/attendanceRepository";
-import { attendanceData } from "../interfaces/attendanceData";
+import { attendanceData } from "../interfaces/attendance.interface";
 
 // 1. 전체 참석 정보 조회
 export const getAllAttendances = async (invitationId: number) => {
