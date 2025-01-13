@@ -50,7 +50,7 @@ export const passwordChangeToHash = async (password: string, salt: string): Prom
 };
 
 export const createAccessToken = async(userInfo: IUser) : Promise<string> => {
-  const secreyKey: string = process.env.ACCESS_TOKEN_SECRET_KEY || "";
+  const secreyKey: string = process.env.TOKEN_SECRET_KEY || "";
   try{
     const accessToken = jwt.sign(
       {
@@ -68,7 +68,7 @@ export const createAccessToken = async(userInfo: IUser) : Promise<string> => {
 }
 
 export const createRefreshToken = async(userInfo:IUser): Promise<string> => {
-  const secreyKey: string = process.env.REFRESH_TOKEN_SECRET_KEY || "";
+  const secreyKey: string = process.env.TOKEN_SECRET_KEY || "";
   try{
     const refreshToken = jwt.sign(
       {
@@ -86,7 +86,7 @@ export const createRefreshToken = async(userInfo:IUser): Promise<string> => {
 }
 
 export const verifyToken = async (token: string): Promise<IUser> => {
-  const secreyKey: string = process.env.ACCESS_TOKEN_SECRET_KEY || "";
+  const secreyKey: string = process.env.TOKEN_SECRET_KEY || "";
   try{
     const jwtPayload = jwt.verify(token, secreyKey) as JwtPayload;
     let userInfo : IUser = {
