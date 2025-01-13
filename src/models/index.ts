@@ -19,7 +19,7 @@ db.Token = TokenModel;
 GuestInfoModel.initialize(sequelize);
 db.GuestInfo = GuestInfoModel;
 
-//테이블 간 관계
+// 테이블 간 관계
 db.User.hasMany(db.Invitation, { foreignKey: 'userId' });
 db.Invitation.belongsTo(db.User, { foreignKey: 'userId' });
 db.Invitation.hasMany(db.GuestInfo, { foreignKey: 'invitationId' });

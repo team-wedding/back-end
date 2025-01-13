@@ -172,7 +172,7 @@ interface InvitationCreationAttributes extends Partial<InvitationData> {
         },
         {
           sequelize,
-          tableName: 'Invitations',
+          tableName: 'invitations',
           timestamps: true,
         }
       );
