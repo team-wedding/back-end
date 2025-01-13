@@ -43,7 +43,8 @@ export const refreshToken: RequestHandler = async (req: Request, res: Response, 
     req.userId = userInfo.id as number; // userId를 req.userId에 저장
     next()
   }catch(err){
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'서버 에러'});
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'서버 에러 in refreshToken'});
+    console.log(err);
     return;
   }
 }
