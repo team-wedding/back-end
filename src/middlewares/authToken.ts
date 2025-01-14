@@ -1,6 +1,11 @@
-import { verifyToken, isMatchRefreshToken, localAuth } from '../utils/authUtil';
+import { verifyToken, isMatchRefreshToken, localAuth, kakaoAuth } from '../utils/authUtil';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response, NextFunction, RequestHandler } from "express";
+import axios from 'axios';
+import qs from 'qs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const authToken: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try{
@@ -25,6 +30,40 @@ export const authToken: RequestHandler = async (req: Request, res: Response, nex
   }catch(err){
     console.log(err);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({messgae:'서버 에러'});
+    return;
+  }
+}
+
+export const kakaoAuthToken: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try{
+    const kakaoToken = await axios({
+      method: "POST",
+      url: "https://kauth.kakao.com/oauth/token",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      data: qs.stringify({
+        grant_type: "authorization_code",
+        client_id: process.env.KAKAO_ID,
+        redirectUri: process.env.REDIRECT_URI,
+        code: req.query.code as string,
+      })
+    })
+    if(!kakaoToken){
+      res.status(StatusCodes.UNAUTHORIZED).json({message:'kakaoAuthToken Error : kakao에서 accessToken 안넘어옴;;'});
+      return;
+    }
+    let userInfo = await kakaoAuth(kakaoToken);
+
+    if(!userInfo){
+      res.status(StatusCodes.UNAUTHORIZED).json({message:'kakaoAuthToken userInfo err'});
+      return;
+    }
+    req.userInfo = userInfo
+    next()
+  }catch(err){
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({messgae:'kakaoAuthToken 서버 에러'});
     return;
   }
 }
