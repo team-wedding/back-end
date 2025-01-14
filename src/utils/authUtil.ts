@@ -3,6 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import * as tokenRepository from '../repositories/tokenRepository';
 import { User as IUser } from '../interfaces/user.interface';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -12,6 +13,27 @@ export const localAuth = async (token: string): Promise<IUser> => {
     return userInfo
   }catch(err){
     throw new Error(`localAuth Err: ${(err as Error).message}`);
+  }
+}
+
+export const kakaoAuth = async (token: any): Promise<IUser> => {
+  try{
+    const kakaoUserInfo: any = await axios({
+      method : "GET",
+      url: "https://kapi.kakao.com/v2/user/me",
+      headers: {
+        Authorization: `Bearer ${token.data.access_token}`,
+      },
+    });
+    const userInfo: IUser = {
+      email: kakaoUserInfo.data.kakao_account.email,
+      name: kakaoUserInfo.data.properties.nickname,
+      password: kakaoUserInfo.data.id.toString(),
+      provider: "kakao"
+    }
+    return userInfo
+  }catch(err){
+    throw new Error(`kakaoAuth Err: ${(err as Error).message}`);
   }
 }
 

@@ -1,7 +1,7 @@
-import express, {Request, Response, NextFunction} from 'express';
-import {signup, login, logout, updateAccessToken, myPage, changePassword, deleteUser} from '../controllers/userController';
+import express from 'express';
+import {signup, login, logout, updateAccessToken, myPage, changePassword, deleteUser, kakaoLogin} from '../controllers/userController';
 import {signupValidate, loginValidate, changePasswordValidate} from '../middlewares/validations';
-import { authToken, refreshToken } from '../middlewares/authToken';
+import { authToken, kakaoAuthToken, refreshToken } from '../middlewares/authToken';
 
 const router = express.Router();
 
@@ -15,6 +15,7 @@ router
   .route('/account')
   .get(authToken, myPage)
   .put(authToken, changePasswordValidate, changePassword)
-  .delete(authToken, deleteUser)
+  .delete(authToken, deleteUser);
 
-  export default router;
+router.get('/oauth/kakao',kakaoAuthToken, kakaoLogin);
+export default router;
