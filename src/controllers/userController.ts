@@ -115,7 +115,7 @@ export const kakaoLogin: RequestHandler = async (req: Request, res: Response): P
   const userInfo = req.userInfo;
   console.log(userInfo);
   try{
-    const tokens = await userService.kakaoLogin(userInfo);
+    const tokens = await userService.socialLogin(userInfo);
     console.log(tokens)
     if(tokens){
       res.header('Authorization', `Bearer ${tokens.accessToken}`);
@@ -131,6 +131,31 @@ export const kakaoLogin: RequestHandler = async (req: Request, res: Response): P
   }catch(err){
     console.log(err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'kakaoLogin 서버 에러'});
+    return;
+  }
+};
+
+export const naverLogin: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const userInfo = req.userInfo;
+  console.log(`naverLogin의 userInfo : ${userInfo}`);
+  try{
+    const tokens = await userService.socialLogin(userInfo);
+    console.log(tokens);
+
+    if(tokens){
+      res.header('Authorization', `Bearer ${tokens.accessToken}`);
+      res.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true, 
+      });
+      res.status(StatusCodes.OK).json({message:'로그인'});
+      return;
+    }
+    res.status(StatusCodes.BAD_REQUEST).json({message:'이미 해당 email로 회원가입된 이력있음.'});
+    return;
+
+  }catch(err){
+    console.log(err)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'naverLogin 서버 에러'});
     return;
   }
 };

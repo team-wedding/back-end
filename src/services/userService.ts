@@ -96,20 +96,18 @@ export const myPage = async(email: string) : Promise<any> => {
   }
 }
 
-export const kakaoLogin = async (userInfo:any):Promise<any> => {
+export const socialLogin = async (userInfo:any):Promise<any> => {
   try{
     
     let searchedUserInfo = await userRepository.selectUser(userInfo.email);
     
-    if(!searchedUserInfo) {
-      userInfo = await authUtil.createHashPassword(userInfo)
-      await userRepository.createUser(userInfo)
-      searchedUserInfo = await userRepository.selectUser(userInfo.email);
-    }
-
-    if(searchedUserInfo.provider !== "kakao"){
+    if(searchedUserInfo) {
       return false
     }
+
+    userInfo = await authUtil.createHashPassword(userInfo)
+    await userRepository.createUser(userInfo)
+    searchedUserInfo = await userRepository.selectUser(userInfo.email);
 
     const accessToken = await authUtil.createAccessToken(searchedUserInfo);
     const refreshToken = await authUtil.createRefreshToken(searchedUserInfo);

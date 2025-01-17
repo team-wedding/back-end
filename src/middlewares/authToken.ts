@@ -1,4 +1,4 @@
-import { verifyToken, isMatchRefreshToken, localAuth, kakaoAuth } from '../utils/authUtil';
+import { verifyToken, isMatchRefreshToken, localAuth, kakaoAuth, naverAuth } from '../utils/authUtil';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import axios from 'axios';
@@ -45,7 +45,7 @@ export const kakaoAuthToken: RequestHandler = async (req: Request, res: Response
       data: qs.stringify({
         grant_type: "authorization_code",
         client_id: process.env.KAKAO_ID,
-        redirectUri: process.env.REDIRECT_URI,
+        redirectUri: process.env.KAKAO_REDIRECT_URI,
         code: req.query.code as string,
       })
     })
@@ -54,6 +54,45 @@ export const kakaoAuthToken: RequestHandler = async (req: Request, res: Response
       return;
     }
     let userInfo = await kakaoAuth(kakaoToken);
+
+    if(!userInfo){
+      res.status(StatusCodes.UNAUTHORIZED).json({message:'kakaoAuthToken userInfo err'});
+      return;
+    }
+    req.userInfo = userInfo
+    next()
+  }catch(err){
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({messgae:'kakaoAuthToken 서버 에러'});
+    return;
+  }
+}
+
+export const naverAuthToken: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try{
+    const naverToken = await axios({
+      method: "POST",
+      url: "https://nid.naver.com/oauth2.0/token",
+      headers: {
+        'X-Naver-Client-Id': process.env.NAVER_ID, 
+        'X-Naver-Client-Secret': process.env.NAVER_SECRET
+      },
+      data: qs.stringify({
+        grant_type: "authorization_code",
+        response_type: "code",
+        client_id: process.env.NAVER_ID,
+        client_secret: process.env.NAVER_SECRET,
+        redirect_uri: process.env.NAVER_REDIRECT_URI,
+        code: req.query.code as string,
+        state: req.query.state as string
+      })
+    })
+    
+    if(!naverToken){
+      res.status(StatusCodes.UNAUTHORIZED).json({message:'naverAuthToken Error : naver에서 accessToken 안넘어옴;;'});
+      return;
+    }
+    let userInfo = await naverAuth(naverToken);
 
     if(!userInfo){
       res.status(StatusCodes.UNAUTHORIZED).json({message:'kakaoAuthToken userInfo err'});
