@@ -58,12 +58,34 @@ export const changePassword = async(email: string, password: string, newPassword
     if(await authUtil.isMatchPassword(userInfo, password) && password !== newPassword){
       const salt = await authUtil.createRandomSalt()
       const newHashPassword = await authUtil.passwordChangeToHash(newPassword, salt)
-      await userRepository.updateUser(userInfo.id, newHashPassword, salt)
+      await userRepository.updatePassword(userInfo.id, newHashPassword, salt)
       return true
     }
     return false
   }catch(err){
     throw new Error(`userService changePassword Err: ${(err as Error).message}`)
+  }
+}
+
+export const changeUserInfo = async(email: string, newName: string, newEmail: string) : Promise<boolean> => {
+  try{
+    const userInfo = await userRepository.selectUser(email);
+    if(newName && newEmail){
+      await userRepository.updateAllUserInfo(userInfo.id, newName, newEmail);
+      return true
+    }
+    if(newName){
+      await userRepository.updateName(userInfo.id, newName);
+      return true
+    }
+    if(newEmail){
+      await userRepository.updateEmail(userInfo.id, newEmail);
+      return true
+    }
+
+    return false
+  }catch(err){
+    throw new Error(`userService changeUserInfo Err: ${(err as Error).message}`)
   }
 }
 

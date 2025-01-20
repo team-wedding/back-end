@@ -94,6 +94,25 @@ export const changePassword: RequestHandler = async (req: Request, res: Response
   }
 }
 
+export const changeUserInfo: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  try{
+    const userInfo = req.userInfo;
+    const {newName, newEmail} = req.body;
+    console.log(newName)
+    console.log(newEmail)
+    if(await userService.changeUserInfo(userInfo.email as string, newName, newEmail)){
+      res.status(StatusCodes.OK).json({message:'변경완료'});
+      return;
+    }
+    res.status(StatusCodes.BAD_REQUEST).json({message:'잘못된 요청입니다.'});
+    return;
+  }catch(err){
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'서버 에러'});
+    return;
+  }
+}
+
 export const deleteUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try{
     const userInfo = req.userInfo;

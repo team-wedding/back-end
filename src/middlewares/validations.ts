@@ -38,3 +38,9 @@ export const changePasswordValidate = [
   body('newPassword').isString(),
   validate
 ]
+
+export const changeUserInfoValidate = [
+  body('newEmail').optional().isEmail(),
+  body('newName').optional().isString(),
+  validate
+]
