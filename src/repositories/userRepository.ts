@@ -33,7 +33,7 @@ export const deleteUser = async(userInfo:IUser) => {
   }
 };
 
-export const updateUser = async (id:number, newHashPassword:string, salt:string) => {
+export const updatePassword = async (id:number, newHashPassword:string, salt:string) => {
   try{
     await db.User.update({
       hashPassword: newHashPassword,
@@ -44,6 +44,52 @@ export const updateUser = async (id:number, newHashPassword:string, salt:string)
     });
     return true
   }catch(err){
-    throw new Error(`userRepository updateUser err: ${(err as Error).message}`)
+    throw new Error(`userRepository updatePassword err: ${(err as Error).message}`)
+  }
+};
+
+export const updateAllUserInfo = async (id:number, newName:string, newEmail:string) => {
+  try{
+    await db.User.update({
+      name: newName,
+      email: newEmail
+    },
+    {
+      where: {id: id}
+    });
+    return true
+  }catch(err){
+    console.log(err);
+    throw new Error(`userRepository updateAllUserInfo err: ${(err as Error).message}`);
+  }
+};
+
+export const updateName = async (id:number, newName:string) => {
+  try{
+    await db.User.update({
+      name: newName,
+    },
+    {
+      where: {id: id}
+    });
+    return true
+  }catch(err){
+    console.log(err);
+    throw new Error(`userRepository updateName err: ${(err as Error).message}`);
+  }
+};
+
+export const updateEmail = async (id:number, newEmail:string) => {
+  try{
+    await db.User.update({
+      email: newEmail
+    },
+    {
+      where: {id: id}
+    });
+    return true
+  }catch(err){
+    console.log(err);
+    throw new Error(`userRepository updateEmail err: ${(err as Error).message}`);
   }
 };

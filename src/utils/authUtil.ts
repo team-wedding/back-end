@@ -37,6 +37,30 @@ export const kakaoAuth = async (token: any): Promise<IUser> => {
   }
 }
 
+export const naverAuth = async (token: any): Promise<IUser> => {
+  try{
+    const naverUserInfo: any = await axios({
+      method : "GET",
+      url: "https://openapi.naver.com/v1/nid/me",
+      headers: {
+        Authorization: `Bearer ${token.data.access_token}`,
+      },
+    });
+    
+    console.log(`naverUserInfo : ${JSON.stringify(naverUserInfo.data.response)}`);
+
+    const userInfo: IUser = {
+      email: naverUserInfo.data.response.email,
+      name: naverUserInfo.data.response.name,
+      password: naverUserInfo.data.response.id,
+      provider: "naver"
+    }
+    return userInfo
+  }catch(err){
+    throw new Error(`kakaoAuth Err: ${(err as Error).message}`);
+  }
+}
+
 export const createHashPassword = async (userInfo: IUser): Promise<Object> => {
   try{
     const salt = await createRandomSalt();
