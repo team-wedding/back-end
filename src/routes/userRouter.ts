@@ -1,6 +1,6 @@
 import express from 'express';
-import {signup, login, logout, updateAccessToken, myPage, changePassword, deleteUser, kakaoLogin, naverLogin, changeUserInfo} from '../controllers/userController';
-import {signupValidate, loginValidate, changePasswordValidate, changeUserInfoValidate} from '../middlewares/validations';
+import {signup, login, logout, updateAccessToken, myPage, changePassword, deleteUser, kakaoLogin, naverLogin, changeUserInfo, resetPassword} from '../controllers/userController';
+import {signupValidate, loginValidate, changePasswordValidate, changeUserInfoValidate, passwordResetValidate} from '../middlewares/validations';
 import { authToken, kakaoAuthToken, refreshToken, naverAuthToken } from '../middlewares/authToken';
 
 const router = express.Router();
@@ -18,6 +18,7 @@ router
   .delete(authToken, deleteUser);
 
 router.put('/account/password', authToken, changePasswordValidate, changePassword);
+router.put('/account/password/reset', passwordResetValidate, resetPassword);
 
 router.get('/oauth/kakao',kakaoAuthToken, kakaoLogin);
 router.get('/oauth/naver',naverAuthToken, naverLogin);

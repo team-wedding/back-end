@@ -44,3 +44,8 @@ export const changeUserInfoValidate = [
   body('newName').optional().isString(),
   validate
 ]
+
+export const passwordResetValidate = [
+  body('email').isEmail(),
+  validate
+]

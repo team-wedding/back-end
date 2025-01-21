@@ -94,6 +94,21 @@ export const changePassword: RequestHandler = async (req: Request, res: Response
   }
 }
 
+export const resetPassword: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  try{
+    const {email} = req.body;
+    if(await userService.resetPassword(email as string)){
+      res.status(StatusCodes.OK).json({message:'임시 비밀번호 발급 완료'});
+      return;
+    }
+    res.status(StatusCodes.BAD_REQUEST).json({message:'회원 가입되지 않은 이메일 입니다.'});
+    return;
+  }catch(err){
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'서버 에러'});
+    return;
+  }
+}
+
 export const changeUserInfo: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try{
     const userInfo = req.userInfo;
