@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import * as attendanceService from "../services/attendanceSerivce";
+import * as attendanceService from "../services/attendanceService";
 import { attendanceData } from "../interfaces/attendance.interface";
-import { User as IUser } from '../interfaces/user.interface';
+import { User as IUser } from "../interfaces/user.interface";
 
 // 1. 전체 참석 정보 조회
 export const getAllAttendances = async (
@@ -11,21 +11,31 @@ export const getAllAttendances = async (
 ): Promise<void> => {
   try {
     const userInfo: IUser = req.userInfo; // 토큰에서 사용자 정보 추출
+    const userId = userInfo.id as number;
+    const allAttendances = await attendanceService.getAllAttendances(userId);
 
-    if (!userInfo) {
-      res.status(StatusCodes.UNAUTHORIZED).json({ message: "인증 실패" });
+    if (allAttendances && allAttendances.length > 0) {
+      res.status(StatusCodes.OK).json(allAttendances);
       return;
     }
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: "전체 참석 정보가 존재하지 않습니다." });
 
-    const invitationId = userInfo.id as number;
-    const allAttendances = await attendanceService.getAllAttendances(
-      invitationId
-    );
-
-    res.status(StatusCodes.OK).json(allAttendances);
-  } catch (err: any) {
-    console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    // if (!userInfo) {
+    //   res
+    //     .status(StatusCodes.UNAUTHORIZED)
+    //     .json({ message: "인증에 실패하였습니다. 토큰값을 확인해주세요." });
+    //   return;
+    // }
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "서버 에러, 서버를 다시 확인해주세요." });
   }
 };
 
@@ -35,14 +45,21 @@ export const getMyAttendance = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
+  const { name, contact } = req.body;
   try {
-    const attendance = await attendanceService.getMyAttendance(id);
+    const attendance = await attendanceService.getMyAttendance(
+      id,
+      name,
+      contact
+    );
     if (attendance) {
       res.status(StatusCodes.OK).json(attendance);
     } else {
       res
         .status(StatusCodes.NOT_FOUND)
-        .json({ message: "참석 정보가 없습니다." });
+        .json({
+          message: "참석 정보가 없습니다. 이름과 이메일을 다시 확인해주세요.",
+        });
     }
   } catch (err: any) {
     console.error(err);
@@ -56,9 +73,11 @@ export const postMyAttendance = async (
   res: Response
 ): Promise<void> => {
   const {
+    userId,
     invitationId,
     name,
     contact,
+    isDining,
     attendance,
     isGroomSide,
     isBrideSide,
@@ -67,9 +86,11 @@ export const postMyAttendance = async (
 
   try {
     await attendanceService.postMyAttendance({
+      userId,
       invitationId,
       name,
       contact,
+      isDining,
       attendance,
       isGroomSide,
       isBrideSide,
@@ -86,7 +107,7 @@ export const postMyAttendance = async (
   }
 };
 
-// 4. 개인 참석 정보 삭제
+// 4. 개인 참석 정보 삭제     // 이름과 연락처
 export const deleteMyAttendance = async (
   req: Request<{ id: number }, {}, { name: string; contact: string }>,
   res: Response
