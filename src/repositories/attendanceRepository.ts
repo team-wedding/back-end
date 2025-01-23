@@ -4,81 +4,100 @@ import GuestInfo from "../models/guestInfo";
 
 // 1. 전체 참석 정보 조회
 export const findAllAttendances = async (
-  invitationId: number
+  userId: number
 ): Promise<GuestInfo[]> => {
   try {
-    console.log("모든 참석 정보 기록을 불러오는 중입니다...");
-    const result = await db.GuestInfo.findAll({
-      where: { invitationId },
+    console.log("모든 참석 정보를 불러오는 중입니다...");
+    const attendance = await db.GuestInfo.findAll({
+      where: { userId },
     });
-    console.log("모든 참석 정보가 불러와졌습니다. : ", result);
-    return result;
-  } catch (error: any) {
-    console.error(
-      "모든 참석 정보 기록을 불러오는 중에 오류가 감지되었습니다.",
-      error
-    );
+    if (!attendance) {
+      console.log("전체 참석 정보가 없습니다.");
+    }
+    console.log("모든 참석 정보가 불러와졌습니다. : ", attendance);
+    return attendance;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
     throw new Error(
-      `모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${error.message}`
+      `모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`
     );
   }
 };
 
 // 2. 개인 참석 정보 조회
-export const findAttendanceById = async (
-  id: number
+export const findMyAttendanceByParamsId = async (
+  id: number,
+  name: string,
+  contact: string
 ): Promise<GuestInfo | null> => {
   try {
-    const result = await db.GuestInfo.findOne({ where: { id: Number(id) } });
-    if (!result) {
-      console.warn(`아이디에 해당하는 참석 정보가 없습니다. 아이디값 : ${id}`);
-    }
-    return result;
-  } catch (error: any) {
-    console.error(
-      `참석 정보를 조회하는 데에 실패하였습니다. 다시 시도하여 주십시오.`,
-      error
+    console.log(
+      `아이디 ${id}, 이름 ${name}, 연락처 ${contact}에 해당하는 개인 참석 정보를 불러오는 중입니다...`
     );
+    const attendance = await db.GuestInfo.findOne({
+      where: { id, name, contact },
+    });
+    if (!attendance) {
+      console.log(
+        `아이디 ${id}, 이름 ${name}, 연락처 ${contact}에 해당하는 참석 정보가 없습니다.`
+      );
+    }
+    return attendance;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
     throw new Error(
-      `참석 정보를 조회하는 데에 실패하였습니다. 다시 시도하여 주십시오. ${id}: ${error.message}`
+      `아이디 ${id}, 이름 ${name}, 연락처 ${contact}의 참석 정보를 불러오는 것에 실패했습니다. : ${errorMessage}`
     );
   }
 };
 
-// 3. 참석 정보 생성
-export const createAttendance = async (
+// 3. 개인 참석 정보 생성
+export const createMyAttendance = async (
   attendanceData: attendanceData
 ): Promise<GuestInfo> => {
   try {
-    const result = await db.GuestInfo.create({
+    const attendance = await db.GuestInfo.create({
+      userId: attendanceData.userId,
       invitationId: attendanceData.invitationId,
       name: attendanceData.name,
       contact: attendanceData.contact,
-      attendance: attendanceData.attendance ?? true, // 기본값 true
-      isGroomSide: attendanceData.isGroomSide ?? false, // 기본값 false
-      isBrideSide: attendanceData.isBrideSide ?? false, // 기본값 false
-      companions: attendanceData.companions ?? 0, // 기본값 0
+      isDining: attendanceData.isDining,
+      attendance: attendanceData.attendance,
+      isGroomSide: attendanceData.isGroomSide,
+      isBrideSide: attendanceData.isBrideSide,
+      companions: attendanceData.companions,
     });
-    return result;
-  } catch (error: any) {
-    console.error("참석 정보를 등록하는 데에 실패하였습니다.", error);
-    throw new Error(
-      `참석 정보를 등록하는 데에 실패하였습니다. ${error.message}`
-    );
+    if (!attendance) {
+      console.log("참석 정보 등록에 필요한 정보를 생성하지 못했습니다.");
+    }
+    return attendance;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    throw new Error(`참석 정보 등록에 실패했습니다. : ${errorMessage}`);
   }
 };
 
-// 4. 참석 정보 삭제
-export const deleteAttendance = async (
+// 4. 개인 참석 정보 삭제   // 이름 + 연락처
+export const removeMyAttendanceByContact = async (
+  id: number,
   name: string,
   contact: string
 ): Promise<boolean> => {
   try {
     console.log(
-      `다음 이름과 이메일을 통해 참석 정보 삭제 시도중입니다.. name: ${name}, contact: ${contact}`
+      `다음 이름과 연락처를 통해 참석 정보 삭제 시도중입니다.. name: ${name}, contact: ${contact}`
     );
     const attendance = await db.GuestInfo.findOne({
-      where: { name, contact },
+      where: { id, name, contact },
     });
 
     if (!attendance) {
@@ -93,11 +112,13 @@ export const deleteAttendance = async (
       `다음 이름과 이메일로 기록된 참석 정보가 성공적으로 삭제되었습니다. name: ${name}, contact: ${contact}.`
     );
     return true;
-  } catch (error: any) {
-    console.error(
-      `다음 이름과 이메일로 기록된 참석 정보 삭제에 실패했습니다. name: ${name}, contact: ${contact}`,
-      error
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    throw new Error(
+      `다음 이름과 이메일로 기록된 참석 정보 삭제에 실패했습니다. name: ${name}, contact: ${contact} : ${errorMessage}`
     );
-    throw new Error(`참석 정보 삭제에 실패했습니다. : ${error.message}`);
   }
 };

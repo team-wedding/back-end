@@ -1,21 +1,20 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { attendanceData } from "../interfaces/attendance.interface";
+import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
 
-// Attendance 모델 정의
-class GuestInfo extends Model<attendanceData> implements attendanceData {
+// celebrationMsg 모델 정의
+class CelebrationMsg extends Model<celebrationMsgData> {
   public id!: number; // PK
   public userId!: number; // FK
   public invitationId!: number;
   public name!: string;
-  public contact!: string;
-  public isDining!: "예정" | "안함" | "미정";
-  public attendance!: boolean;
-  public isGroomSide!: boolean;
-  public isBrideSide!: boolean;
-  public companions!: number;
+  public password!: string;
+  public imageUrl!: string;
+  public message!: string;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 
   static initialize(sequelize: Sequelize): void {
-    GuestInfo.init(
+    CelebrationMsg.init(
       {
         id: {
           type: DataTypes.INTEGER,
@@ -39,38 +38,35 @@ class GuestInfo extends Model<attendanceData> implements attendanceData {
           type: DataTypes.STRING(10),
           allowNull: false,
         },
-        contact: {
-          type: DataTypes.STRING(20),
+        password: {
+          type: DataTypes.STRING(100),
           allowNull: false,
         },
-        isDining: {
-          type: DataTypes.ENUM("예정", "안함", "미정"),
+        imageUrl: {
+          type: DataTypes.STRING(200),
+        },
+        message: {
+          type: DataTypes.STRING(300),
           allowNull: false,
         },
-        attendance: {
-          type: DataTypes.BOOLEAN,
+        createdAt: {
+          type: DataTypes.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
           allowNull: false,
         },
-        isGroomSide: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-        },
-        isBrideSide: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-        },
-        companions: {
-          type: DataTypes.INTEGER,
+        updatedAt: {
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW,
           allowNull: false,
         },
       },
       {
         sequelize,
-        tableName: "guest_info",
-        timestamps: false,
+        tableName: "celebrationMsgs",
+        timestamps: true,
       }
     );
   }
 }
 
-export default GuestInfo;
+export default CelebrationMsg;
