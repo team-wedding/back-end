@@ -18,7 +18,10 @@ export const postInvitation: RequestHandler = async (req: Request, res: Response
         const userInfo: IUser = req.userInfo; // 토큰에서 사용자 정보 추출
         invitationData.userId = userInfo.id as number; // invitationData에 userId 설정
 
-        const result = await invitationService.createInvitation(userInfo.id as number, invitationData);
+        const { calendars, maps, galleries, accounts, contacts, notices } = req.body; // 선택 정보 데이터 추출
+
+        const result = await invitationService.createInvitation(userInfo.id as number, 
+            invitationData, calendars, maps, galleries, accounts, contacts, notices);
 
         if (result) {
             res.status(StatusCodes.CREATED).json({ 
@@ -46,7 +49,7 @@ export const getInvitation: RequestHandler = async (req: Request, res: Response,
         }
         res.status(StatusCodes.NOT_FOUND).json({ message: '청첩장을 찾을 수 없습니다.' });
     } catch (err) {
-        console.error(err);
+        res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
         next(err);
     }
 };
@@ -56,21 +59,22 @@ export const putInvitation: RequestHandler = async (req: Request, res: Response,
         const invitationId: number = validateIdParam(req.params.id);
         const userInfo: IUser = req.userInfo; // 토큰에서 가져온 userInfo
         const updatedData: InvitationData = req.body;
+        const { calendars, maps, galleries, accounts, contacts, notices } = req.body; // 선택 정보 데이터 추출
 
         if (!userInfo || !userInfo.id) {
             res.status(StatusCodes.UNAUTHORIZED).json({ message: '토큰이 없습니다.' });
             return;
         }
 
-        const isUpdated = await invitationService.updateInvitation(userInfo.id, invitationId, updatedData);
+        const isUpdated = await invitationService.updateInvitation(userInfo.id, invitationId, updatedData, calendars, maps, galleries, accounts, contacts, notices);
 
         if (isUpdated) {
             res.status(StatusCodes.OK).json({ message: '청첩장이 수정되었습니다.' });
             return;
         }
-        res.status(StatusCodes.BAD_REQUEST).json({ message: '청첩장 수정 실패.' });
+        res.status(StatusCodes.BAD_REQUEST).json({ message: '변경된 내용이 없습니다.' });
     } catch (err) {
-        console.error(err);
+        res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
         next(err);
     }
 };
@@ -93,7 +97,7 @@ export const deleteInvitation: RequestHandler = async (req: Request, res: Respon
         }
         res.status(StatusCodes.BAD_REQUEST).json({ message: '청첩장 삭제 실패.' });
     } catch (err) {
-        console.error(err);
+        res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
         next(err);
     }
 };
@@ -109,7 +113,7 @@ export const getInvitations: RequestHandler = async (req: Request, res: Response
         }
         res.status(StatusCodes.NOT_FOUND).json({ message: '청첩장을 찾을 수 없습니다.' });
     } catch (err) {
-        console.error(err);
+        res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
         next(err);
     }
 };

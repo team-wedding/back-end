@@ -1,24 +1,76 @@
 import * as invitationRepository from '../repositories/invitationRepository';
 import { InvitationData } from '../interfaces/invitation.interface';
+import { CalendarData } from '../interfaces/calendar.interface';
+import { MapData } from '../interfaces/map.interface';
+import { GalleryData } from '../interfaces/gallery.interface';
+import { AccountData } from '../interfaces/account.interface';
+import { ContactData } from '../interfaces/contact.interface';
+import { NoticeData } from '../interfaces/notice.interface';
 
 type UpdateInvitation = Partial<Omit<InvitationData, 'id' | 'userId'>>;
 
-export const createInvitation = async (
-  userId: number,
-  invitationData: Omit<InvitationData, 'userId'>
-): Promise<{ id: number }> => {
+export const createInvitation = async ( userId: number, invitationData: Omit<InvitationData, 'userId'>, 
+  calendars: CalendarData[], maps: MapData[], galleries: GalleryData[], accounts: AccountData[], contacts: ContactData[], notices: NoticeData[] ): Promise<{ id: number }> => {
   try {
     const newInvitation = await invitationRepository.createInvitation({ ...invitationData, userId });
+    
+    if (calendars && calendars.length > 0) { // 캘린더 정보가 들어오면 저장
+      const calendarsWithInvitationId = calendars.map((calendar) => ({
+        ...calendar,
+        invitationId: newInvitation.id, // 생성된 초대장의 id
+      }));
+      await invitationRepository.createCalendar(calendarsWithInvitationId);
+    }
+
+    if (maps && maps.length > 0) { // 지도, 교통수단 정보가 들어오면 저장
+      const mapsWithInvitationId = maps.map((map) => ({
+        ...map,
+        invitationId: newInvitation.id,
+      }))
+      await invitationRepository.createMap(mapsWithInvitationId);
+    }
+
+    if (galleries && galleries.length > 0) { // 갤러리 정보가 들어오면 저장
+      const galleriesWithInvitationId = galleries.map((gallery) => ({
+        ...gallery,
+        invitationId: newInvitation.id,
+      }))
+      await invitationRepository.createGallery(galleriesWithInvitationId);
+    }
+
+    if (accounts && accounts.length > 0) { // 계좌 정보가 들어오면 저장
+      const accountsWithInvitationId = accounts.map((account) => ({
+        ...account,
+        invitationId: newInvitation.id,
+      }))
+      await invitationRepository.createAccount(accountsWithInvitationId);
+    }
+
+    if (contacts && contacts.length > 0) { // 연락처 정보가 들어오면 저장
+      const contactsWithInvitationId = contacts.map((contact) => ({
+        ...contact,
+        invitationId: newInvitation.id,
+      }))
+      await invitationRepository.createContact(contactsWithInvitationId);
+    }
+
+    if (notices && notices.length > 0) { // 공지사항 정보가 들어오면 저장
+      const noticesWithInvitationId = notices.map((notice) => ({
+        ...notice,
+        invitationId: newInvitation.id,
+      }))
+      await invitationRepository.createNotice(noticesWithInvitationId);
+    }
+
     return { id: newInvitation.id };
+
   } catch (err: unknown) {
     console.error('청첩장 등록 에러:', (err as Error).message);
     throw new Error('청첩장 등록 에러');
   }
 };
 
-export const getInvitationById = async (
-  invitationId: number
-): Promise<InvitationData | null> => {
+export const getInvitationById = async ( invitationId: number ): Promise<InvitationData | null> => {
   try {
     const invitation = await invitationRepository.getInvitationById(invitationId);
     return invitation || null;
@@ -28,13 +80,12 @@ export const getInvitationById = async (
   }
 };
 
-export const updateInvitation = async (
-  userId: number,
-  invitationId: number,
-  updatedData: UpdateInvitation
-): Promise<boolean> => {
+export const updateInvitation = async ( userId: number, invitationId: number, updatedData: UpdateInvitation,
+  calendars: CalendarData[], maps: MapData[], galleries: GalleryData[], accounts: AccountData[], contacts: ContactData[], notices: NoticeData[]
+ ): Promise<boolean> => {
   try {
     const invitation = await invitationRepository.getInvitationById(invitationId);
+
     if (!invitation) {
       throw new Error('해당 청첩장이 없습니다');
     }
@@ -43,7 +94,61 @@ export const updateInvitation = async (
       throw new Error('권한이 없어 수정할 수 없습니다');
     }
 
-    const isUpdated = await invitationRepository.updateInvitation(invitationId, updatedData);
+    let isUpdated = false;
+    const invitationUpdated = await invitationRepository.updateInvitation(invitationId, updatedData);
+
+    if (invitationUpdated) {
+      isUpdated = true;
+    }
+    
+    if (calendars && calendars.length > 0 ) {
+      const updatedCalendars = await invitationRepository.updateCalendar(invitationId, calendars);
+
+      if (updatedCalendars){
+        isUpdated = true;
+      }
+    }
+
+    if (maps && maps.length > 0 ) {
+      const updatedMaps = await invitationRepository.updateMap(invitationId, maps);
+
+      if (updatedMaps){
+        isUpdated = true;
+      }
+    }
+
+    if (galleries && galleries.length > 0 ) {
+      const updatedGalleries = await invitationRepository.updateGallery(invitationId, galleries);
+
+      if (updatedGalleries){
+        isUpdated = true;
+      }
+    }
+
+    if (accounts && accounts.length > 0 ) {
+      const updatedAccounts = await invitationRepository.updateAccount(invitationId, accounts);
+
+      if (updatedAccounts){
+        isUpdated = true;
+      }
+    }
+
+    if (contacts && contacts.length > 0 ) {
+      const updatedContacts = await invitationRepository.updateContact(invitationId, contacts);
+
+      if (updatedContacts){
+        isUpdated = true;
+      }
+    }
+
+    if (notices && notices.length > 0 ) {
+      const updatedNotices = await invitationRepository.updateNotice(invitationId, notices);
+
+      if (updatedNotices){
+        isUpdated = true;
+      }
+    }
+    
     return isUpdated;
   } catch (err: unknown) {
     console.error('청첩장 수정 에러:', (err as Error).message);
@@ -51,10 +156,7 @@ export const updateInvitation = async (
   }
 };
 
-export const deleteInvitation = async (
-  userId: number,
-  invitationId: number
-): Promise<boolean> => {
+export const deleteInvitation = async ( userId: number, invitationId: number ): Promise<boolean> => {
   try {
     const invitation = await invitationRepository.getInvitationById(invitationId);
     if (!invitation) {
@@ -65,17 +167,26 @@ export const deleteInvitation = async (
       throw new Error('권한이 없어 삭제할 수 없습니다');
     }
 
-    const isDeleted = await invitationRepository.deleteInvitation(invitationId);
-    return isDeleted;
+   const isCalendarDeleted = await invitationRepository.deleteCalendar(invitationId);
+   const isMapDeleted = await invitationRepository.deleteMap(invitationId);
+   const isAccountDeleted = await invitationRepository.deleteAccount(invitationId);
+   const isContactDeleted = await invitationRepository.deleteContact(invitationId);
+   const isGalleryDeleted = await invitationRepository.deleteGallery(invitationId);
+   const isNoticeDeleted = await invitationRepository.deleteNotice(invitationId);
+
+   if (isCalendarDeleted && isAccountDeleted && isContactDeleted && isGalleryDeleted && isMapDeleted && isNoticeDeleted) {
+    const isInvitationDeleted = await invitationRepository.deleteInvitation(invitationId);
+    return isInvitationDeleted;
+   }
+
+    return false;
   } catch (err: unknown) {
     console.error('청첩장 삭제 에러:', (err as Error).message);
     throw new Error('청첩장 삭제 에러');
   }
 };
 
-export const getInvitationsByUserId = async (
-  userId: number
-): Promise<InvitationData[]> => {
+export const getInvitationsByUserId = async ( userId: number ): Promise<InvitationData[]> => {
   try {
     const invitations = await invitationRepository.getInvitationsByUserId(userId);
     return invitations || [];
