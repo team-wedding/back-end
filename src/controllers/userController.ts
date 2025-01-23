@@ -149,7 +149,7 @@ export const kakaoLogin: RequestHandler = async (req: Request, res: Response): P
   const userInfo = req.userInfo;
   console.log(userInfo);
   try{
-    const tokens = await userService.socialLogin(userInfo);
+    const tokens = await userService.kakaoLogin(userInfo);
     console.log(tokens)
     if(tokens){
       res.header('Authorization', `Bearer ${tokens.accessToken}`);
@@ -159,7 +159,7 @@ export const kakaoLogin: RequestHandler = async (req: Request, res: Response): P
       res.status(StatusCodes.OK).json({message:'로그인'});
       return;
     }
-    res.status(StatusCodes.BAD_REQUEST).json({message:'이미 로컬로 회원가입된 이력있음.'});
+    res.status(StatusCodes.BAD_REQUEST).json({message:'이미 해당 email로 회원가입된 이력있음.'});
     return;
 
   }catch(err){
@@ -171,11 +171,10 @@ export const kakaoLogin: RequestHandler = async (req: Request, res: Response): P
 
 export const naverLogin: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   const userInfo = req.userInfo;
-  console.log(`naverLogin의 userInfo : ${userInfo}`);
+  console.log(userInfo);
   try{
-    const tokens = await userService.socialLogin(userInfo);
-    console.log(tokens);
-
+    const tokens = await userService.naverLogin(userInfo);
+    console.log(tokens)
     if(tokens){
       res.header('Authorization', `Bearer ${tokens.accessToken}`);
       res.cookie('refreshToken', tokens.refreshToken, {

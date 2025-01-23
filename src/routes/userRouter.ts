@@ -20,7 +20,7 @@ router
 router.put('/account/password', authToken, changePasswordValidate, changePassword);
 router.put('/account/password/reset', passwordResetValidate, resetPassword);
 
-router.get('/oauth/kakao',kakaoAuthToken, kakaoLogin);
-router.get('/oauth/naver',naverAuthToken, naverLogin);
+router.post('/oauth/kakao',kakaoAuthToken, kakaoLogin);
+router.post('/oauth/naver',naverAuthToken, naverLogin);
 
 export default router;

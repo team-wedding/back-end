@@ -153,13 +153,59 @@ export const myPage = async(email: string) : Promise<any> => {
   }
 }
 
-export const socialLogin = async (userInfo:any):Promise<any> => {
+export const kakaoLogin = async (userInfo:any):Promise<any> => {
   try{
     
     let searchedUserInfo = await userRepository.selectUser(userInfo.email);
     
     if(searchedUserInfo) {
-      return false
+      if(searchedUserInfo.provider === "kakao"){
+        const accessToken = await authUtil.createAccessToken(searchedUserInfo);
+        const refreshToken = await authUtil.createRefreshToken(searchedUserInfo);
+        if (await tokenRepository.selectTokenByUid(searchedUserInfo.id)){
+          await tokenRepository.deleteToken(searchedUserInfo.id)
+        }
+        await tokenRepository.createToken(searchedUserInfo.id, refreshToken);
+        
+        return {accessToken: accessToken, refreshToken: refreshToken}; 
+      }
+      return false;
+    }
+
+    userInfo = await authUtil.createHashPassword(userInfo)
+    await userRepository.createUser(userInfo)
+    searchedUserInfo = await userRepository.selectUser(userInfo.email);
+
+    const accessToken = await authUtil.createAccessToken(searchedUserInfo);
+    const refreshToken = await authUtil.createRefreshToken(searchedUserInfo);
+    if (await tokenRepository.selectTokenByUid(searchedUserInfo.id)){
+      await tokenRepository.deleteToken(searchedUserInfo.id)
+    }
+    await tokenRepository.createToken(searchedUserInfo.id, refreshToken);
+    
+    return {accessToken: accessToken, refreshToken: refreshToken};
+  }catch(err){
+    throw new Error(`userService signup err: ${(err as Error).message}`);
+  }
+};
+
+export const naverLogin = async (userInfo:any):Promise<any> => {
+  try{
+    
+    let searchedUserInfo = await userRepository.selectUser(userInfo.email);
+    
+    if(searchedUserInfo) {
+      if(searchedUserInfo.provider === "naver"){
+        const accessToken = await authUtil.createAccessToken(searchedUserInfo);
+        const refreshToken = await authUtil.createRefreshToken(searchedUserInfo);
+        if (await tokenRepository.selectTokenByUid(searchedUserInfo.id)){
+          await tokenRepository.deleteToken(searchedUserInfo.id)
+        }
+        await tokenRepository.createToken(searchedUserInfo.id, refreshToken);
+        
+        return {accessToken: accessToken, refreshToken: refreshToken}; 
+      }
+      return false;
     }
 
     userInfo = await authUtil.createHashPassword(userInfo)
