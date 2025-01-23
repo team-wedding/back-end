@@ -46,7 +46,7 @@ export const kakaoAuthToken: RequestHandler = async (req: Request, res: Response
         grant_type: "authorization_code",
         client_id: process.env.KAKAO_ID,
         redirectUri: process.env.KAKAO_REDIRECT_URI,
-        code: req.query.code as string,
+        code: req.body.code as string,
       })
     })
     if(!kakaoToken){
@@ -83,8 +83,8 @@ export const naverAuthToken: RequestHandler = async (req: Request, res: Response
         client_id: process.env.NAVER_ID,
         client_secret: process.env.NAVER_SECRET,
         redirect_uri: process.env.NAVER_REDIRECT_URI,
-        code: req.query.code as string,
-        state: req.query.state as string
+        code: req.body.code as string,
+        state: "test"
       })
     })
     
@@ -95,14 +95,14 @@ export const naverAuthToken: RequestHandler = async (req: Request, res: Response
     let userInfo = await naverAuth(naverToken);
 
     if(!userInfo){
-      res.status(StatusCodes.UNAUTHORIZED).json({message:'kakaoAuthToken userInfo err'});
+      res.status(StatusCodes.UNAUTHORIZED).json({message:'naverAuthToken userInfo err'});
       return;
     }
     req.userInfo = userInfo
     next()
   }catch(err){
     console.log(err);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({messgae:'kakaoAuthToken 서버 에러'});
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({messgae:'naverAuthToken 서버 에러'});
     return;
   }
 }
