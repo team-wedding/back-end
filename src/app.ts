@@ -6,8 +6,6 @@ import userRouter from "./routes/userRouter";
 import invitationRouter from "./routes/invitationRouter";
 import attendanceRouter from "./routes/attendanceRouter";
 import celebrationMsgRouter from "./routes/celebrationMsgRouter";
-import CelebrationMsg from "./models/celebrationMsg"; // db 자동 업데이트
-import GuestInfo from "./models/guestInfo"; // db 자동 업데이트
 
 // app 정의
 const app: Application = express();
@@ -15,10 +13,7 @@ const app: Application = express();
 // 미들웨어 설정
 app.use(express.json());
 dotenv.config();
-app.use(cors({ exposedHeaders: ["Authorization"] }));
-
-CelebrationMsg.initialize(sequelize); // 모델 초기화  (한 줄 추가)
-GuestInfo.initialize(sequelize); // 모델 초기화  (한 줄 추가)
+app.use(cors({ origin: 'http://localhost:5173', credentials: true, exposedHeaders: ['Authorization'], }));
 
 // sequelize db 연결
 sequelize

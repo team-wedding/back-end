@@ -45,6 +45,7 @@ export const logout: RequestHandler = async (req: Request, res: Response): Promi
   try{
     const userInfo: IUser = req.userInfo;
     await userService.logout(userInfo)
+    res.clearCookie('refreshToken');
     res.status(StatusCodes.OK).json({message:'로그아웃'});
     return;
   }catch(err){
@@ -133,6 +134,7 @@ export const deleteUser: RequestHandler = async (req: Request, res: Response): P
     const userInfo = req.userInfo;
     const {password} = req.body;
     if(await userService.deleteUser(userInfo.email as string, password)){
+      res.clearCookie('refreshToken');
       res.status(StatusCodes.OK).json({message:'탈퇴 되었습니다.'});
       return;
     }
