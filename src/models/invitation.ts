@@ -52,7 +52,7 @@ import { InvitationData } from "../interfaces/invitation.interface";
             onDelete: 'CASCADE',
           },
           title : {
-            type: DataTypes.STRING(10),
+            type: DataTypes.STRING(30),
             allowNull: false,
           },
           groomName: {
