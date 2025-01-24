@@ -1,5 +1,5 @@
 import express from 'express';
-import {signup, login, logout, updateAccessToken, myPage, changePassword, deleteUser, kakaoLogin, naverLogin, changeUserInfo, resetPassword, socialRedirect} from '../controllers/userController';
+import {signup, login, logout, updateAccessToken, myPage, changePassword, deleteUser, kakaoLogin, naverLogin, changeUserInfo, resetPassword} from '../controllers/userController';
 import {signupValidate, loginValidate, changePasswordValidate, changeUserInfoValidate, passwordResetValidate} from '../middlewares/validations';
 import { authToken, kakaoAuthToken, refreshToken, naverAuthToken } from '../middlewares/authToken';
 
@@ -22,7 +22,5 @@ router.put('/account/password/reset', passwordResetValidate, resetPassword);
 
 router.post('/oauth/kakao',kakaoAuthToken, kakaoLogin);
 router.post('/oauth/naver',naverAuthToken, naverLogin);
-router.get('/oauth/callback/kakao', socialRedirect);
-router.get('/oauth/callback/naver', socialRedirect);
 
 export default router;
