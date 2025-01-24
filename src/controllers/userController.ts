@@ -194,3 +194,13 @@ export const naverLogin: RequestHandler = async (req: Request, res: Response): P
     return;
   }
 };
+
+export const socialRedirect: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  try{
+    res.status(StatusCodes.OK).json({message:'성공~'});
+    return;
+  }catch(err){
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:'서버 에러'});
+    return;
+  }
+}
