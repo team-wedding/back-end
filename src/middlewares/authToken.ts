@@ -23,9 +23,6 @@ export const authToken: RequestHandler = async (req: Request, res: Response, nex
 
 	  res.header('authorization', `Bearer ${accessToken}`); // 추가부분
     req.userInfo = userInfo
-    req.userId = userInfo.id as number; // userId를 req.userId에 저장
-    req.body.userId = userInfo.id;
-    console.log('authToken req.body:', req.body);
     next()
   }catch(err){
     console.log(err);

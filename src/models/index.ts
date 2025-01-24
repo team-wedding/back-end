@@ -10,6 +10,7 @@ import GalleryModel from "./gallery";
 import AccountModel from "./account";
 import ContactModel from "./contact";
 import NoticeModel from "./notice";
+import CelebrationMsgModel from "./celebrationMsg";
 
 const sequelize = new Sequelize(config.development as any);
 
@@ -46,6 +47,9 @@ db.Contact = ContactModel;
 NoticeModel.initialize(sequelize);
 db.Notice = NoticeModel;
 
+CelebrationMsgModel.initialize(sequelize);
+db.CelebrationMsg = CelebrationMsgModel;
+
 
 // 테이블 간 관계
 db.User.hasMany(db.Invitation, { foreignKey: 'userId' });
@@ -71,6 +75,8 @@ db.Contact.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'contacts'
 
 db.Invitation.hasMany(db.Notice, { foreignKey: 'invitationId', as: 'notices' });
 db.Notice.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'notices' });
+
+db.CelebrationMsg.belongsTo(db.User, { foreignKey: "userId" });
 
 export { sequelize };
 export default db;
