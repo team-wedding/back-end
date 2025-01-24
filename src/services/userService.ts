@@ -124,10 +124,10 @@ export const changeUserInfo = async(email: string, newName: string, newEmail: st
   }
 }
 
-export const deleteUser = async(email: string, password:string) : Promise<boolean> => {
+export const deleteUser = async(email: string) : Promise<boolean> => {
   try{
     const userInfo = await userRepository.selectUser(email)
-    if(await authUtil.isMatchPassword(userInfo, password)){
+    if(userInfo){
       await userRepository.deleteUser(userInfo)
       return true;
     }
