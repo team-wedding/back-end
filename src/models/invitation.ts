@@ -12,8 +12,8 @@ import { InvitationData } from "../interfaces/invitation.interface";
     public date!: string;
     public location!: string[];
     public imgUrl!: string;
-    public contentType!: string;
-    public content!: Text;
+    public greetingTitle!: string;
+    public greetingContent!: Text;
     public groomFatherName!: string;
     public groomMotherName!: string;
     public brideFatherName!: string;
@@ -75,11 +75,11 @@ import { InvitationData } from "../interfaces/invitation.interface";
             type: DataTypes.STRING(999),
             allowNull: false,
           },
-          contentType: {
+          greetingTitle: {
             type: DataTypes.STRING(10),
             allowNull: false,
           },
-          content: {
+          greetingContent: {
             type: DataTypes.TEXT,
             allowNull: false,
           },
@@ -150,7 +150,7 @@ import { InvitationData } from "../interfaces/invitation.interface";
           },
           audio: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
           },
           createdAt: {
             type: DataTypes.DATE,
