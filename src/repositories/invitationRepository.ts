@@ -124,7 +124,11 @@ export const getInvitationsByUserId = async (userId: number) => {
             as : 'guestInfos',
             required: false,
           },
-          // 포토톡 추가
+          {
+            model: db.CelebrationMsg,
+            as : 'celebrationMsgs',
+            required: false,
+          },
           {
             model: db.Calendar,
             as: 'calendars',

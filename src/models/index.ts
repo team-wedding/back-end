@@ -76,6 +76,9 @@ db.Contact.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'contacts'
 db.Invitation.hasMany(db.Notice, { foreignKey: 'invitationId', as: 'notices' });
 db.Notice.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'notices' });
 
+db.Invitation.hasMany(db.CelebrationMsg, { foreignKey: 'invitationId', as: 'celebrationMsgs' });
+db.CelebrationMsg.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'celebrationMsgs' });
+
 db.CelebrationMsg.belongsTo(db.User, { foreignKey: "userId" });
 
 export { sequelize };
