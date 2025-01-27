@@ -47,7 +47,7 @@ export const getInvitation: RequestHandler = async (req: Request, res: Response,
             res.status(StatusCodes.OK).json(invitation);
             return;
         }
-        res.status(StatusCodes.NOT_FOUND).json({ message: '청첩장을 찾을 수 없습니다.' });
+        res.status(StatusCodes.OK).json([]);
     } catch (err) {
         res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
         next(err);
@@ -111,7 +111,7 @@ export const getInvitations: RequestHandler = async (req: Request, res: Response
             res.status(StatusCodes.OK).json(invitations);
             return;
         }
-        res.status(StatusCodes.NOT_FOUND).json({ message: '청첩장을 찾을 수 없습니다.' });
+        res.status(StatusCodes.OK).json([]);
     } catch (err) {
         res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
         next(err);
