@@ -33,7 +33,13 @@ class GuestInfo extends Model<attendanceData> implements attendanceData {
         },
         invitationId: {
           type: DataTypes.INTEGER,
-          allowNull: false,
+          references: {
+            model: 'invitations',
+            key: 'id',
+          },
+          allowNull: true,
+          onUpdate: 'CASCADE',  
+          onDelete: 'CASCADE',
         },
         name: {
           type: DataTypes.STRING(10),
