@@ -4,12 +4,17 @@ import GuestInfo from "../models/guestInfo";
 
 // 1. 전체 참석 정보 조회
 export const findAllAttendances = async (
-  userId: number
+  userId: number,
+  offset: number,
+  limit: number
 ): Promise<GuestInfo[]> => {
   try {
     console.log("모든 참석 정보를 불러오는 중입니다...");
     const attendance = await db.GuestInfo.findAll({
       where: { userId },
+      offset, // 시작 위치
+      limit, // 가져올 데이터 개수
+      order: [["id", "DESC"]], // 정렬 조건 : descending(내림차순)
     });
     if (!attendance) {
       console.log("전체 참석 정보가 없습니다.");
@@ -25,6 +30,13 @@ export const findAllAttendances = async (
       `모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`
     );
   }
+};
+
+// 개수 세기
+export const countAttendances = async (userId: number) => {
+  return await GuestInfo.count({
+    where: { userId },
+  });
 };
 
 // 2. 개인 참석 정보 조회
