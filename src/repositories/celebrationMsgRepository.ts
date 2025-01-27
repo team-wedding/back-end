@@ -4,12 +4,17 @@ import CelebrationMsg from "../models/celebrationMsg";
 
 // 1. 전체 축하메세지 정보 조회
 export const findAllcelebrationMsgs = async (
-  userId: number
+  userId: number,
+  offset: number,
+  limit: number
 ): Promise<CelebrationMsg[]> => {
   try {
     console.log("모든 축하메세지 기록을 불러오는 중입니다...");
     const celebrationMsg = await db.CelebrationMsg.findAll({
       where: { userId },
+      offset,
+      limit,
+      order: [["id", "DESC"]],
     });
     if (!celebrationMsg) {
       console.log("전체 축하메세지 정보가 없습니다.");
@@ -25,6 +30,13 @@ export const findAllcelebrationMsgs = async (
       `모든 축하메세지 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`
     );
   }
+};
+
+// 개수 세기
+export const countCelebrationMsgs = async (userId: number) => {
+  return await CelebrationMsg.count({
+    where: { userId },
+  });
 };
 
 // 2. 개인이 작성한 축하메세지 조회

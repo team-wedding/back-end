@@ -4,6 +4,7 @@ import * as celebrationMsgService from "../services/celebrationMsgService";
 import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
 import { User as IUser } from "../interfaces/user.interface";
 
+// api 예시 : localhost:3000/api/celebrationMsgs?page=1&size=4
 // 1. 전체 축하메세지 정보 조회 + get
 export const getAllCelebrationMsgs = async (
   req: Request,
@@ -11,16 +12,25 @@ export const getAllCelebrationMsgs = async (
 ): Promise<void> => {
   try {
     const userInfo: IUser = req.userInfo;
+    const userId = userInfo.id as number;
 
     if (!userInfo) {
-      res.status(StatusCodes.UNAUTHORIZED).json({ message: "인증 실패" });
+      res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: "userInfo가 존재하지 않습니다. 인증 실패" });
       return;
     }
-    const userId = userInfo.id as number;
-    const allCelebrationMsgs =
-      await celebrationMsgService.getAllCelebrationMsgs(userId);
 
-    res.status(StatusCodes.OK).json(allCelebrationMsgs);
+    // 페이지네이션 파라미터 받기
+    const page = parseInt(req.query.page as string);
+    const size = parseInt(req.query.size as string);
+
+    const { allCelebrationMsgs, totalItems, totalPages } =
+      await celebrationMsgService.getAllCelebrationMsgs(userId, page, size);
+
+    res
+      .status(StatusCodes.OK)
+      .json({ allCelebrationMsgs, totalItems, totalPages, currentPage: page });
   } catch (err: any) {
     console.error(err);
     res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });

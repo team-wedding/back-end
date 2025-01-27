@@ -2,9 +2,37 @@ import * as celebrationMsgRepository from "../repositories/celebrationMsgReposit
 import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
 
 // 1. 전체 축하메세지 정보 조회 + get
-export const getAllCelebrationMsgs = async (userId: number) => {
+export const getAllCelebrationMsgs = async (
+  userId: number,
+  page: number,
+  size: number
+) => {
   try {
-    return await celebrationMsgRepository.findAllcelebrationMsgs(userId);
+    // 시작 위치 계산
+    const offset = (page - 1) * size;
+    const limit = size;
+
+    // repo 호출
+    const allCelebrationMsgs =
+      await celebrationMsgRepository.findAllcelebrationMsgs(
+        userId,
+        offset,
+        limit
+      );
+
+    // 전체 데이터 개수 및 총 페이지 계산
+    const totalItems = await celebrationMsgRepository.countCelebrationMsgs(
+      userId
+    );
+    const totalPages = Math.ceil(totalItems / size);
+
+    return {
+      allCelebrationMsgs,
+      totalItems,
+      totalPages,
+    };
+
+    // return await celebrationMsgRepository.findAllcelebrationMsgs(userId);
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error
