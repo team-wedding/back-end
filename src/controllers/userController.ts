@@ -132,13 +132,12 @@ export const changeUserInfo: RequestHandler = async (req: Request, res: Response
 export const deleteUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try{
     const userInfo = req.userInfo;
-    const {password} = req.body;
-    if(await userService.deleteUser(userInfo.email as string, password)){
+    if(await userService.deleteUser(userInfo.email as string)){
       res.clearCookie('refreshToken');
       res.status(StatusCodes.OK).json({message:'탈퇴 되었습니다.'});
       return;
     }
-    res.status(StatusCodes.BAD_REQUEST).json({message: '잘못된 정보입니다.'});
+    res.status(StatusCodes.BAD_REQUEST).json({message: '잘못된 접근입니다.'});
     return;
   }catch(err){
     console.log(err)

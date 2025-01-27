@@ -21,7 +21,6 @@ export const authToken: RequestHandler = async (req: Request, res: Response, nex
       return;
     }
 
-	  res.header('authorization', `Bearer ${accessToken}`); // 추가부분
     req.userInfo = userInfo
     next()
   }catch(err){

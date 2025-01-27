@@ -13,7 +13,7 @@ const app: Application = express();
 // 미들웨어 설정
 app.use(express.json());
 dotenv.config();
-app.use(cors({ origin: 'http://localhost:5173', credentials: true, exposedHeaders: ['Authorization'], }));
+app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true, exposedHeaders: ['Authorization'], }));
 
 // sequelize db 연결
 sequelize
