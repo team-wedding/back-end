@@ -7,8 +7,8 @@ export interface InvitationData {
     date?: string;
     location?: string[];
     imgUrl?: string;
-    contentType?: string;
-    content?: Text;
+    greetingTitle?: string;
+    greetingContent?: Text;
     groomFatherName?: string;
     groomMotherName?: string;
     brideFatherName?: string;
