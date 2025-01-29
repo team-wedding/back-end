@@ -4,6 +4,7 @@ import * as attendanceService from "../services/attendanceService";
 import { attendanceData } from "../interfaces/attendance.interface";
 import { User as IUser } from "../interfaces/user.interface";
 
+// api 예시 : http://localhost:3000/api/attendances?page=1&size=4
 // 1. 전체 참석 정보 조회
 export const getAllAttendances = async (
   req: Request,
@@ -12,10 +13,27 @@ export const getAllAttendances = async (
   try {
     const userInfo: IUser = req.userInfo; // 토큰에서 사용자 정보 추출
     const userId = userInfo.id as number;
-    const allAttendances = await attendanceService.getAllAttendances(userId);
+
+    // 페이지네이션 파라미터 받기
+    const page = parseInt(req.query.page as string);
+    const size = parseInt(req.query.size as string);
+
+    // 서비스 호출
+    // totalItems : 전체 데이터의 총 항목 수 (db에 총 몇 개 저장되어 있는 지)
+    // totalPages : 페이지네이션으로 나눴을 때 생성되는 총 페이지 수
+
+    const { allAttendances, totalItems, totalPages } =
+      await attendanceService.getAllAttendances(userId, page, size);
+
+    // const allAttendances = await attendanceService.getAllAttendances(userId);  // 원래 코드
 
     if (allAttendances && allAttendances.length > 0) {
-      res.status(StatusCodes.OK).json(allAttendances);
+      res.status(StatusCodes.OK).json({
+        allAttendances,
+        totalItems,
+        totalPages,
+        currentPage: page,
+      });
       return;
     }
     res
@@ -55,11 +73,9 @@ export const getMyAttendance = async (
     if (attendance) {
       res.status(StatusCodes.OK).json(attendance);
     } else {
-      res
-        .status(StatusCodes.NOT_FOUND)
-        .json({
-          message: "참석 정보가 없습니다. 이름과 이메일을 다시 확인해주세요.",
-        });
+      res.status(StatusCodes.NOT_FOUND).json({
+        message: "참석 정보가 없습니다. 이름과 이메일을 다시 확인해주세요.",
+      });
     }
   } catch (err: any) {
     console.error(err);
