@@ -4,7 +4,7 @@ export interface InvitationData {
     title?: string;
     groomName?: string;
     brideName?: string;
-    date?: string;
+    date?: number[];
     location?: string[];
     imgUrl?: string;
     greetingTitle?: string;
@@ -13,7 +13,7 @@ export interface InvitationData {
     groomMotherName?: string;
     brideFatherName?: string;
     brideMotherName?: string;
-    weddingTime?: string;
+    weddingTime?: number[];
     groomFatherAlive?: boolean;
     groomMotherAlive?: boolean;
     brideFatherAlive?: boolean;

@@ -5,6 +5,7 @@ class Calendar extends Model<CalendarData> implements CalendarData
 {
     public id!: number;
     public invitationId!: number;
+    public isActive!: boolean;
     public order!: number;
     public calendar!: boolean;
     public dDay!: boolean;
@@ -27,6 +28,11 @@ class Calendar extends Model<CalendarData> implements CalendarData
                     },
                     onUpdate: 'CASCADE',  
                     onDelete: 'CASCADE',
+                },
+                isActive: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                    defaultValue: false,
                 },
                 order: {
                     type: DataTypes.INTEGER,

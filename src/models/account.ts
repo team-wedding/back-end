@@ -5,6 +5,7 @@ class Account extends Model<AccountData> implements AccountData
 {
     public id!: number;
     public invitationId!: number;
+    public isActive!: boolean;
     public order!: number;
     public accountHolderName!: string;
     public bankName!: string;
@@ -28,6 +29,11 @@ class Account extends Model<AccountData> implements AccountData
                     },
                     onUpdate: 'CASCADE',  
                     onDelete: 'CASCADE',
+                },
+                isActive: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                    defaultValue: false,
                 },
                 order: {
                     type: DataTypes.INTEGER,

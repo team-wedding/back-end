@@ -5,6 +5,7 @@ class Map extends Model<MapData> implements MapData
 {
     public id!: number;
     public invitationId!: number;
+    public isActive!: boolean;
     public order!: number;
     public tMap!: boolean;
     public naverMap!: boolean;
@@ -33,6 +34,11 @@ class Map extends Model<MapData> implements MapData
                     },
                     onUpdate: 'CASCADE',  
                     onDelete: 'CASCADE',
+                },
+                isActive: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                    defaultValue: false,
                 },
                 order: {
                     type: DataTypes.INTEGER,

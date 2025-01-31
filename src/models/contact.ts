@@ -5,6 +5,7 @@ class Contact extends Model<ContactData> implements ContactData
 {
     public id!: number;
     public invitationId!: number;
+    public isActive!: boolean;
     public order!: number;
     public groomContact!: string;
     public brideContact!: string;
@@ -30,6 +31,11 @@ class Contact extends Model<ContactData> implements ContactData
                     },
                     onUpdate: 'CASCADE',  
                     onDelete: 'CASCADE',
+                },
+                isActive: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                    defaultValue: false,
                 },
                 order: {
                     type: DataTypes.INTEGER,

@@ -1,6 +1,7 @@
 export interface MapData {
     id?: number;
     invitationId?: number;
+    isActive?: boolean;
     order?: number;
     tMap?: boolean;
     naverMap?: boolean;

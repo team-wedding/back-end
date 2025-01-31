@@ -5,6 +5,7 @@ class Gallery extends Model<GalleryData> implements GalleryData
 {
     public id!: number;
     public invitationId!: number;
+    public isActive!: boolean;
     public order!: number;
     public images!: string[];
     public grid!: boolean;
@@ -26,6 +27,11 @@ class Gallery extends Model<GalleryData> implements GalleryData
                     },
                     onUpdate: 'CASCADE',  
                     onDelete: 'CASCADE',
+                },
+                isActive: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                    defaultValue: false,
                 },
                 order:{
                     type: DataTypes.INTEGER,
