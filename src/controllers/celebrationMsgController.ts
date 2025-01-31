@@ -80,18 +80,28 @@ export const postMyCelebrationMsg = async (
   } = req.body;
 
   try {
+    // // 이미지 업로드 결과 처리 - 250127
+    // const imageUrl = req.file ? (req.file as any).location : null;
+
+    // 여러 이미지 업로드 처리
+    const imageUrls = req.files
+      ? (req.files as any[]).map((file) => file.location) // 업로드된 각 이미지 URL을 배열로 처리
+      : [];
+
     await celebrationMsgService.postMyCelebrationMsg({
       userId,
       invitationId,
       name,
       password,
-      imageUrl,
+      imageUrl: JSON.stringify(imageUrls),
       message,
       createdAt,
       updatedAt,
     });
     res.status(StatusCodes.CREATED).json({
       message: `${name}님이 작성하신 축하 메세지가 성공적으로 등록되었습니다.`,
+      imageUrls,
+      // imageUrl,
     });
   } catch (err: any) {
     console.error(err);

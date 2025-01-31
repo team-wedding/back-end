@@ -1,4 +1,6 @@
 import express, { Request, Response, Router } from "express";
+import imageUploader from "../middlewares/imageUploader";
+
 const router: Router = express.Router();
 import {
   getAllCelebrationMsgs,
@@ -16,7 +18,7 @@ router.get("/", authToken, getAllCelebrationMsgs);
 router.get("/:id", getMyCelebrationMsg);
 
 // 3. 개인 축하메세지 등록
-router.post("/", postMyCelebrationMsg);
+router.post("/", imageUploader.array("image"), postMyCelebrationMsg);
 
 // 4. 개인 축하메세지 수정
 router.put("/:id", putMyCelebrationMsg);

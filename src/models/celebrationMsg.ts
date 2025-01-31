@@ -49,7 +49,7 @@ class CelebrationMsg extends Model<celebrationMsgData> {
           allowNull: false,
         },
         imageUrl: {
-          type: DataTypes.STRING(200),
+          type: DataTypes.STRING(500),
         },
         message: {
           type: DataTypes.STRING(300),
