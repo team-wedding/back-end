@@ -5,6 +5,7 @@ class Notice extends Model<NoticeData> implements NoticeData
 {
     public id!: number;
     public invitationId!: number;
+    public isActive!: boolean;
     public order!: number;
     public title!: string;
     public content!: string;
@@ -27,6 +28,11 @@ class Notice extends Model<NoticeData> implements NoticeData
                     },
                     onUpdate: 'CASCADE',  
                     onDelete: 'CASCADE',
+                },
+                isActive: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                    defaultValue: false,
                 },
                 order: {
                     type: DataTypes.INTEGER,
