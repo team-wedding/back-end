@@ -9,7 +9,7 @@ import { InvitationData } from "../interfaces/invitation.interface";
     public title!: string;
     public groomName!: string;
     public brideName!: string;
-    public date!: string;
+    public date!: number[];
     public location!: string[];
     public imgUrl!: string;
     public greetingTitle!: string;
@@ -18,7 +18,7 @@ import { InvitationData } from "../interfaces/invitation.interface";
     public groomMotherName!: string;
     public brideFatherName!: string;
     public brideMotherName!: string;
-    public weddingTime!: string;
+    public weddingTime!: number[];
     public groomFatherAlive!: boolean;
     public groomMotherAlive!: boolean;
     public brideFatherAlive!: boolean;
@@ -64,7 +64,7 @@ import { InvitationData } from "../interfaces/invitation.interface";
             allowNull: false,
           },
           date: {
-            type: DataTypes.STRING(10),
+            type: DataTypes.JSON,
             allowNull: false,
           },
           location: {
@@ -100,7 +100,7 @@ import { InvitationData } from "../interfaces/invitation.interface";
             allowNull: false,
           },
           weddingTime: {
-            type: DataTypes.STRING(10),
+            type: DataTypes.JSON,
             allowNull: false,
           },
           groomFatherAlive: {
