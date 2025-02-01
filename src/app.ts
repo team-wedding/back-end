@@ -6,6 +6,7 @@ import userRouter from "./routes/userRouter";
 import invitationRouter from "./routes/invitationRouter";
 import attendanceRouter from "./routes/attendanceRouter";
 import celebrationMsgRouter from "./routes/celebrationMsgRouter";
+import imageUploadRouter from "./routes/imageUploadRouter";
 
 // app 정의
 const app: Application = express();
@@ -30,6 +31,7 @@ app.use("/api/users", userRouter);
 app.use("/api/invitations", invitationRouter);
 app.use("/api/attendances", attendanceRouter);
 app.use("/api/celebrationMsgs", celebrationMsgRouter);
+app.use("/api/imageUpload", imageUploadRouter);
 
 // 서버 실행
 const PORT = process.env.PORT;
