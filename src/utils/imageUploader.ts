@@ -5,10 +5,9 @@ import path from 'path';
 import { Request} from "express";
 import dotenv from 'dotenv';
 
-
 dotenv.config();
 
-AWS.config.update({//AWS 설정
+AWS.config.update({ //AWS 설정
     region: process.env.AWS_REGION,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
