@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express";
-import imageUploader from "../middlewares/imageUploader";
+import imageUploader from "../utils/imageUploader";
 
 const router: Router = express.Router();
 import {
