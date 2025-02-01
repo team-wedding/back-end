@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response, RequestHandler } from "express";
 import { StatusCodes } from "http-status-codes";
 
-export const postImage: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const postImage: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const files = req.files as Express.MulterS3.File[];
 
