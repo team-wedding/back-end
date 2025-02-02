@@ -12,7 +12,7 @@ export const postImage: RequestHandler = async (req: Request, res: Response): Pr
 
     const imageUrls = files.map(file => file.location); // 이미지가 저장된 경로 반환
 
-    res.status(StatusCodes.OK).json({ message: "이미지가 정상적으로 업로드 되었습니다", imageUrls });
+    res.status(StatusCodes.OK).json({ imageUrls });
   } catch (error) {
     console.error("이미지 업로드 오류:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "서버 에러" });
