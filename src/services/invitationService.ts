@@ -6,6 +6,7 @@ import { GalleryData } from '../interfaces/gallery.interface';
 import { AccountData } from '../interfaces/account.interface';
 import { ContactData } from '../interfaces/contact.interface';
 import { NoticeData } from '../interfaces/notice.interface';
+import { ClientError } from '../utils/error';
 
 type UpdateInvitation = Partial<Omit<InvitationData, 'id' | 'userId'>>;
 
@@ -31,6 +32,11 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
     }
 
     if (galleries && galleries.length > 0) { // 갤러리 정보가 들어오면 저장
+      
+      if (galleries.some(gallery => (gallery.images ?? []).length > 9)) {
+        throw new ClientError("갤러리의 이미지 개수는 최대 9개까지만 가능합니다.");
+      }
+
       const galleriesWithInvitationId = galleries.map((gallery) => ({
         ...gallery,
         invitationId: newInvitation.id,
@@ -66,6 +72,11 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
 
   } catch (err: unknown) {
     console.error('청첩장 등록 에러:', (err as Error).message);
+
+    if (err instanceof ClientError) { // ClientError의 경우 따로 처리
+      throw err;
+    }
+
     throw new Error('청첩장 등록 에러');
   }
 };
