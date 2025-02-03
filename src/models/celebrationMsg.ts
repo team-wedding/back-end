@@ -8,7 +8,7 @@ class CelebrationMsg extends Model<celebrationMsgData> {
   public invitationId!: number;
   public name!: string;
   public password!: string;
-  public imageUrl!: string;
+  public imageUrl!: string[];
   public message!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -49,7 +49,7 @@ class CelebrationMsg extends Model<celebrationMsgData> {
           allowNull: false,
         },
         imageUrl: {
-          type: DataTypes.STRING(500),
+          type: DataTypes.JSON,
         },
         message: {
           type: DataTypes.STRING(300),

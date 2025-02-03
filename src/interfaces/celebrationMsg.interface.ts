@@ -4,7 +4,7 @@ export interface celebrationMsgData {
   invitationId: number;
   name: string;
   password: string;
-  imageUrl: string;
+  imageUrl: string[];
   message: string;
   createdAt: Date;
   updatedAt: Date;
