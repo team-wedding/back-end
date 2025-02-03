@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import * as invitationService from "../services/invitationService";
 import { InvitationData } from "../interfaces/invitation.interface";
 import { User as IUser } from '../interfaces/user.interface';
+import { ClientError } from "../utils/error";
 
 const validateIdParam = (param: string): number => {
     const id = Number(param);
@@ -28,13 +29,18 @@ export const postInvitation: RequestHandler = async (req: Request, res: Response
                 message: '청첩장이 생성되었습니다.'
             });
             return;
-        }
+        } 
         res.status(StatusCodes.BAD_REQUEST).json({ 
             message: '청첩장 생성 실패.' 
         });
         
     } catch (err) {
-        next(err);
+        if (err instanceof ClientError) {
+            res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+            return;
+        } else {
+            next(err);
+        }
     }
 };
 
