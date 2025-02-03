@@ -54,6 +54,7 @@ const getAllAttendances = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // 페이지네이션 파라미터 받기
         const page = parseInt(req.query.page);
         const size = parseInt(req.query.size);
+
         // 페이지네이션 쓸 때
         if (page && size) {
             const result = yield attendanceService.getAllAttendances(userId, page, size);
@@ -100,6 +101,7 @@ const getAllAttendances = (req, res) => __awaiter(void 0, void 0, void 0, functi
             //     });
             //     return;
             //   }
+
         }
         res
             .status(http_status_codes_1.StatusCodes.NOT_FOUND)
