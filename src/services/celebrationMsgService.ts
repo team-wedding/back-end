@@ -1,5 +1,6 @@
 import * as celebrationMsgRepository from "../repositories/celebrationMsgRepository";
 import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
+import { ClientError } from "../utils/error";
 
 // 1. 전체 축하메세지 정보 조회 + get
 export const getAllCelebrationMsgs = async (
@@ -43,6 +44,7 @@ export const getAllCelebrationMsgs = async (
     );
   }
 };
+
 // 2. 개인이 작성한 축하메세지 조회 + get
 export const getMyCelebrationMsg = async (
   id: number,
@@ -71,6 +73,9 @@ export const postMyCelebrationMsg = async (
   celebrationMsgData: celebrationMsgData
 ) => {
   try {
+    if(celebrationMsgData.imageUrl.length > 10) {
+      throw new ClientError("이미지 개수는 최대 10개까지 가능합니다.");
+    }
     return await celebrationMsgRepository.createMyCelebrationMsg(
       celebrationMsgData
     );
@@ -79,6 +84,10 @@ export const postMyCelebrationMsg = async (
       error instanceof Error
         ? error.message
         : "알 수 없는 오류가 발생했습니다.";
+
+    if (error instanceof ClientError) {
+      throw error;
+    }
     throw new Error(`축하메세지 정보 등록에 실패했습니다. : ${errorMessage}`);
   }
 };
