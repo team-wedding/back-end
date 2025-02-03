@@ -10,7 +10,7 @@ export const findAllAttendances = async (
 ): Promise<GuestInfo[]> => {
   try {
     // 페이지네이션 있을 때
-    if (offset && limit) {
+    if (offset !== undefined && limit !== undefined) {
       console.log("모든 참석 정보를 불러오는 중입니다...");
       const attendance = await db.GuestInfo.findAll({
         where: { userId },
