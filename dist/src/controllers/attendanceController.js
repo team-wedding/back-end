@@ -54,19 +54,52 @@ const getAllAttendances = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // 페이지네이션 파라미터 받기
         const page = parseInt(req.query.page);
         const size = parseInt(req.query.size);
-        // 서비스 호출
-        // totalItems : 전체 데이터의 총 항목 수 (db에 총 몇 개 저장되어 있는 지)
-        // totalPages : 페이지네이션으로 나눴을 때 생성되는 총 페이지 수
-        const { allAttendances, totalItems, totalPages } = yield attendanceService.getAllAttendances(userId, page, size);
-        // const allAttendances = await attendanceService.getAllAttendances(userId);  // 원래 코드
-        if (allAttendances && allAttendances.length > 0) {
-            res.status(http_status_codes_1.StatusCodes.OK).json({
-                allAttendances,
-                totalItems,
-                totalPages,
-                currentPage: page,
-            });
-            return;
+        // 페이지네이션 쓸 때
+        if (page && size) {
+            const result = yield attendanceService.getAllAttendances(userId, page, size);
+            if ("totalItems" in result && "totalPages" in result) {
+                const { allAttendances, totalItems, totalPages } = result;
+                if (allAttendances && allAttendances.length > 0) {
+                    res.status(http_status_codes_1.StatusCodes.OK).json({
+                        allAttendances,
+                        totalItems,
+                        totalPages,
+                        currentPage: page,
+                    });
+                    return;
+                }
+            }
+        }
+        // const { allAttendances, totalItems, totalPages } =
+        // await attendanceService.getAllAttendances(userId, page, size);
+        // if (allAttendances && allAttendances.length > 0) {
+        //   res.status(StatusCodes.OK).json({
+        //     allAttendances,
+        //     totalItems,
+        //     totalPages,
+        //     currentPage: page,
+        //   });
+        //   return;
+        else {
+            // 페이지네이션 안 쓰는 전체 조회일 때
+            const result = yield attendanceService.getAllAttendances(userId); // 원래 코드
+            // 결과가 배열로 오면 그 데이터를 그대로 응답
+            if (Array.isArray(result)) {
+                if (result.length > 0) {
+                    res.status(http_status_codes_1.StatusCodes.OK).json({
+                        allAttendances: result,
+                    });
+                    return;
+                }
+            }
+            // if ("allAttendances" in result) {
+            //   const allAttendances = result.allAttendances;
+            //   if (allAttendances && allAttendances.length > 0) {
+            //     res.status(StatusCodes.OK).json({
+            //       allAttendances: result,
+            //     });
+            //     return;
+            //   }
         }
         res
             .status(http_status_codes_1.StatusCodes.NOT_FOUND)

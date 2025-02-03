@@ -44,6 +44,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMyCelebrationMsg = exports.putMyCelebrationMsg = exports.postMyCelebrationMsg = exports.getMyCelebrationMsg = exports.getAllCelebrationMsgs = void 0;
 const celebrationMsgRepository = __importStar(require("../repositories/celebrationMsgRepository"));
+const error_1 = require("../utils/error");
 // 1. 전체 축하메세지 정보 조회 + get
 const getAllCelebrationMsgs = (userId, page, size) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -86,12 +87,18 @@ exports.getMyCelebrationMsg = getMyCelebrationMsg;
 // 3. 개인이 작성한 축하메세지 등록 + post
 const postMyCelebrationMsg = (celebrationMsgData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (celebrationMsgData.imageUrl.length > 10) {
+            throw new error_1.ClientError("이미지 개수는 최대 10개까지 가능합니다.");
+        }
         return yield celebrationMsgRepository.createMyCelebrationMsg(celebrationMsgData);
     }
     catch (error) {
         const errorMessage = error instanceof Error
             ? error.message
             : "알 수 없는 오류가 발생했습니다.";
+        if (error instanceof error_1.ClientError) {
+            throw error;
+        }
         throw new Error(`축하메세지 정보 등록에 실패했습니다. : ${errorMessage}`);
     }
 });

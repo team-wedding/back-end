@@ -17,7 +17,7 @@ const app = (0, express_1.default)();
 // 미들웨어 설정
 app.use(express_1.default.json());
 dotenv_1.default.config();
-app.use((0, cors_1.default)({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true, exposedHeaders: ['Authorization'], }));
+app.use((0, cors_1.default)({ origin: ['http://localhost:5173', 'http://localhost:3000', 'https://wedding-front-xi.vercel.app/'], credentials: true, exposedHeaders: ['Authorization'], }));
 // sequelize db 연결
 models_1.sequelize
     .sync({ alter: true })

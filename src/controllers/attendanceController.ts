@@ -3,8 +3,6 @@ import { StatusCodes } from "http-status-codes";
 import * as attendanceService from "../services/attendanceService";
 import {
   attendanceData,
-  paginatedAllAttendances,
-  allAttendances,
 } from "../interfaces/attendance.interface";
 import { User as IUser } from "../interfaces/user.interface";
 
