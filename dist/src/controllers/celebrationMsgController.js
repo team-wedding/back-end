@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMyCelebrationMsg = exports.putMyCelebrationMsg = exports.postMyCelebrationMsg = exports.getMyCelebrationMsg = exports.getAllCelebrationMsgs = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const celebrationMsgService = __importStar(require("../services/celebrationMsgService"));
+const error_1 = require("../utils/error");
 // api 예시 : localhost:3000/api/celebrationMsgs?page=1&size=4
 // 1. 전체 축하메세지 정보 조회 + get
 const getAllCelebrationMsgs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -107,7 +108,7 @@ const postMyCelebrationMsg = (req, res) => __awaiter(void 0, void 0, void 0, fun
             invitationId,
             name,
             password,
-            imageUrl: JSON.stringify(imageUrl),
+            imageUrl,
             message,
             createdAt,
             updatedAt,
@@ -118,10 +119,16 @@ const postMyCelebrationMsg = (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
     catch (err) {
-        console.error(err);
-        res
-            .status(http_status_codes_1.StatusCodes.BAD_REQUEST)
-            .json({ message: err.message || "서버 에러" });
+        if (err instanceof error_1.ClientError) {
+            res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({ message: err.message });
+            return;
+        }
+        else {
+            console.error(err);
+            res
+                .status(http_status_codes_1.StatusCodes.BAD_REQUEST)
+                .json({ message: err.message || "서버 에러" });
+        }
     }
 });
 exports.postMyCelebrationMsg = postMyCelebrationMsg;

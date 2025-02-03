@@ -16,20 +16,35 @@ exports.removeMyAttendanceByContact = exports.createMyAttendance = exports.findM
 const models_1 = __importDefault(require("../models"));
 const guestInfo_1 = __importDefault(require("../models/guestInfo"));
 // 1. 전체 참석 정보 조회
-const findAllAttendances = (userId, offset, limit) => __awaiter(void 0, void 0, void 0, function* () {
+const findAllAttendances = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...args_1], void 0, function* (userId, offset = 0, limit = 0) {
     try {
-        console.log("모든 참석 정보를 불러오는 중입니다...");
-        const attendance = yield models_1.default.GuestInfo.findAll({
-            where: { userId },
-            offset, // 시작 위치
-            limit, // 가져올 데이터 개수
-            order: [["id", "DESC"]], // 정렬 조건 : descending(내림차순)
-        });
-        if (!attendance) {
-            console.log("전체 참석 정보가 없습니다.");
+        // 페이지네이션 있을 때
+        if (offset && limit) {
+            console.log("모든 참석 정보를 불러오는 중입니다...");
+            const attendance = yield models_1.default.GuestInfo.findAll({
+                where: { userId },
+                offset, // 시작 위치
+                limit, // 가져올 데이터 개수
+                order: [["id", "DESC"]], // 정렬 조건 : descending(내림차순)
+            });
+            if (!attendance) {
+                console.log("전체 참석 정보가 없습니다.");
+            }
+            console.log("모든 참석 정보가 불러와졌습니다. : ", attendance);
+            return attendance;
         }
-        console.log("모든 참석 정보가 불러와졌습니다. : ", attendance);
-        return attendance;
+        else {
+            // 페이지네이션 안 쓸 때
+            console.log("모든 참석 정보를 불러오는 중입니다...");
+            const attendance = yield models_1.default.GuestInfo.findAll({
+                where: { userId },
+            });
+            if (!attendance) {
+                console.log("전체 참석 정보가 없습니다.");
+            }
+            console.log("모든 참석 정보가 불러와졌습니다. : ", attendance);
+            return attendance;
+        }
     }
     catch (error) {
         const errorMessage = error instanceof Error

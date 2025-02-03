@@ -45,22 +45,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMyAttendance = exports.postMyAttendance = exports.getMyAttendance = exports.getAllAttendances = void 0;
 const attendanceRepository = __importStar(require("../repositories/attendanceRepository"));
 // 1. 전체 참석 정보 조회
-const getAllAttendances = (userId, page, size) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllAttendances = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...args_1], void 0, function* (userId, page = 0, size = 0) {
     try {
         // 시작 위치 계산
         const offset = (page - 1) * size;
         const limit = size;
-        // repo 호출
-        const allAttendances = yield attendanceRepository.findAllAttendances(userId, offset, limit);
-        // 전체 데이터 개수 및 총 페이지 계산
-        const totalItems = yield attendanceRepository.countAttendances(userId);
-        const totalPages = Math.ceil(totalItems / size);
-        return {
-            allAttendances,
-            totalItems,
-            totalPages,
-        };
-        // return await attendanceRepository.findAllAttendances(userId);    // 원래 코드
+        // 페이지네이션 있을 때
+        if (page > 0 && size > 0) {
+            // repo 호출
+            const allAttendances = yield attendanceRepository.findAllAttendances(userId, offset, limit);
+            // 전체 데이터 개수 및 총 페이지 계산
+            const totalItems = yield attendanceRepository.countAttendances(userId);
+            const totalPages = Math.ceil(totalItems / size);
+            return {
+                allAttendances,
+                totalItems,
+                totalPages,
+            };
+        }
+        else {
+            // 페이지네이션 안 쓸 때 (page와 size의 기본값이 0)
+            return yield attendanceRepository.findAllAttendances(userId); // 원래 코드
+        }
     }
     catch (error) {
         const errorMessage = error instanceof Error

@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as attendanceService from "../services/attendanceService";
-import { attendanceData } from "../interfaces/attendance.interface";
+import {
+  attendanceData,
+} from "../interfaces/attendance.interface";
 import { User as IUser } from "../interfaces/user.interface";
 
 // api 예시 : http://localhost:3000/api/attendances?page=1&size=4
@@ -18,24 +20,62 @@ export const getAllAttendances = async (
     const page = parseInt(req.query.page as string);
     const size = parseInt(req.query.size as string);
 
-    // 서비스 호출
-    // totalItems : 전체 데이터의 총 항목 수 (db에 총 몇 개 저장되어 있는 지)
-    // totalPages : 페이지네이션으로 나눴을 때 생성되는 총 페이지 수
+    // 페이지네이션 쓸 때
+    if (page && size) {
+      const result = await attendanceService.getAllAttendances(
+        userId,
+        page,
+        size
+      );
 
-    const { allAttendances, totalItems, totalPages } =
-      await attendanceService.getAllAttendances(userId, page, size);
-
-    // const allAttendances = await attendanceService.getAllAttendances(userId);  // 원래 코드
-
-    if (allAttendances && allAttendances.length > 0) {
-      res.status(StatusCodes.OK).json({
-        allAttendances,
-        totalItems,
-        totalPages,
-        currentPage: page,
-      });
-      return;
+      if ("totalItems" in result && "totalPages" in result) {
+        const { allAttendances, totalItems, totalPages } = result;
+        if (allAttendances && allAttendances.length > 0) {
+          res.status(StatusCodes.OK).json({
+            allAttendances,
+            totalItems,
+            totalPages,
+            currentPage: page,
+          });
+          return;
+        }
+      }
     }
+    // const { allAttendances, totalItems, totalPages } =
+    // await attendanceService.getAllAttendances(userId, page, size);
+
+    // if (allAttendances && allAttendances.length > 0) {
+    //   res.status(StatusCodes.OK).json({
+    //     allAttendances,
+    //     totalItems,
+    //     totalPages,
+    //     currentPage: page,
+    //   });
+    //   return;
+    else {
+      // 페이지네이션 안 쓰는 전체 조회일 때
+      const result = await attendanceService.getAllAttendances(userId); // 원래 코드
+
+      // 결과가 배열로 오면 그 데이터를 그대로 응답
+      if (Array.isArray(result)) {
+        if (result.length > 0) {
+          res.status(StatusCodes.OK).json({
+            allAttendances: result,
+          });
+          return;
+        }
+      }
+      // if ("allAttendances" in result) {
+      //   const allAttendances = result.allAttendances;
+
+      //   if (allAttendances && allAttendances.length > 0) {
+      //     res.status(StatusCodes.OK).json({
+      //       allAttendances: result,
+      //     });
+      //     return;
+      //   }
+    }
+
     res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: "전체 참석 정보가 존재하지 않습니다." });

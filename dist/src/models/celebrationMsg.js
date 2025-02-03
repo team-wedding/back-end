@@ -38,7 +38,7 @@ class CelebrationMsg extends sequelize_1.Model {
                 allowNull: false,
             },
             imageUrl: {
-                type: sequelize_1.DataTypes.STRING(500),
+                type: sequelize_1.DataTypes.JSON,
             },
             message: {
                 type: sequelize_1.DataTypes.STRING(300),
