@@ -17,7 +17,7 @@ app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], crede
 
 // sequelize db 연결
 sequelize
-  .sync({ alter: true })
+  .sync({alter : true})
   .then(() => {
     console.log("데이터베이스 연결 및 최신화 성공! ");
   })
