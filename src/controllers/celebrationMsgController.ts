@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import * as celebrationMsgService from "../services/celebrationMsgService";
 import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
 import { User as IUser } from "../interfaces/user.interface";
+import { ClientError } from "../utils/error";
 
 // api 예시 : localhost:3000/api/celebrationMsgs?page=1&size=4
 // 1. 전체 축하메세지 정보 조회 + get
@@ -93,7 +94,7 @@ export const postMyCelebrationMsg = async (
       invitationId,
       name,
       password,
-      imageUrl: JSON.stringify(imageUrl),
+      imageUrl,
       message,
       createdAt,
       updatedAt,
@@ -103,10 +104,15 @@ export const postMyCelebrationMsg = async (
       imageUrl,
     });
   } catch (err: any) {
-    console.error(err);
-    res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ message: err.message || "서버 에러" });
+    if (err instanceof ClientError) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+      return;
+    } else {
+      console.error(err);
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: err.message || "서버 에러" });
+    }
   }
 };
 
