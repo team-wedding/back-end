@@ -33,12 +33,12 @@ class CelebrationMsg extends Model<celebrationMsgData> {
         invitationId: {
           type: DataTypes.INTEGER,
           references: {
-            model: 'invitations',
-            key: 'id',
+            model: "invitations",
+            key: "id",
           },
           allowNull: true,
-          onUpdate: 'CASCADE',  
-          onDelete: 'CASCADE',
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
         },
         name: {
           type: DataTypes.STRING(10),
