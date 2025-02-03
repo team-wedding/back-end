@@ -20,9 +20,6 @@ const db: any = {};
 InvitationModel.initialize(sequelize);
 db.Invitation = InvitationModel;
 
-UserModel.initialize(sequelize);
-db.User = UserModel;
-
 TokenModel.initialize(sequelize);
 db.Token = TokenModel;
 
@@ -50,6 +47,8 @@ db.Notice = NoticeModel;
 CelebrationMsgModel.initialize(sequelize);
 db.CelebrationMsg = CelebrationMsgModel;
 
+UserModel.initialize(sequelize);
+db.User = UserModel;
 
 // 테이블 간 관계
 db.User.hasMany(db.Invitation, { foreignKey: 'userId' });
@@ -80,6 +79,9 @@ db.Invitation.hasMany(db.CelebrationMsg, { foreignKey: 'invitationId', as: 'cele
 db.CelebrationMsg.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'celebrationMsgs' });
 
 db.CelebrationMsg.belongsTo(db.User, { foreignKey: "userId" });
+
+db.User.hasOne(db.Token, { foreignKey: 'userId' });
+db.Token.belongsTo(db.User, { foreignKey: 'userId' });
 
 export { sequelize };
 export default db;
