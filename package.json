@@ -23,7 +23,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
-    "start": "node dist/app.js",
+    "start": "node dist/src/app.js",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts"
   },
   "devDependencies": {
