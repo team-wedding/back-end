@@ -76,7 +76,7 @@ export const resetPassword = async(email: string) : Promise<boolean> => {
   try{
     const userInfo = await userRepository.selectUser(email);
     if(userInfo){
-      const tempPassword = generator.generate({ length: 10, numbers: true });
+      const tempPassword = generator.generate({ length: 16, numbers: true, symbols: true });
       console.log("tempPassword: %s", tempPassword);
 
       const info = await transporter.sendMail({
