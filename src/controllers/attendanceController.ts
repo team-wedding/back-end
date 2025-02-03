@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as attendanceService from "../services/attendanceService";
-import {
-  attendanceData,
-  paginatedAllAttendances,
-  allAttendances,
-} from "../interfaces/attendance.interface";
+import { attendanceData } from "../interfaces/attendance.interface";
 import { User as IUser } from "../interfaces/user.interface";
 
 // api 예시 : http://localhost:3000/api/attendances?page=1&size=4
