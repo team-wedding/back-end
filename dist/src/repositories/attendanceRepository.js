@@ -16,41 +16,20 @@ exports.removeMyAttendanceByContact = exports.createMyAttendance = exports.findM
 const models_1 = __importDefault(require("../models"));
 const guestInfo_1 = __importDefault(require("../models/guestInfo"));
 // 1. 전체 참석 정보 조회
-const findAllAttendances = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...args_1], void 0, function* (userId, offset = 0, limit = 0) {
+const findAllAttendances = (userId, offset, limit) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // 페이지네이션 있을 때
-        if (offset && limit) {
-            console.log("모든 참석 정보를 불러오는 중입니다...");
-            const attendance = yield models_1.default.GuestInfo.findAll({
+        if (offset !== undefined && limit !== undefined) {
+            return yield models_1.default.GuestInfo.findAll({
                 where: { userId },
-                offset, // 시작 위치
-                limit, // 가져올 데이터 개수
-                order: [["id", "DESC"]], // 정렬 조건 : descending(내림차순)
+                offset,
+                limit,
+                order: [["id", "DESC"]],
             });
-            if (!attendance) {
-                console.log("전체 참석 정보가 없습니다.");
-            }
-            console.log("모든 참석 정보가 불러와졌습니다. : ", attendance);
-            return attendance;
         }
-        else {
-            // 페이지네이션 안 쓸 때
-            console.log("모든 참석 정보를 불러오는 중입니다...");
-            const attendance = yield models_1.default.GuestInfo.findAll({
-                where: { userId },
-            });
-            if (!attendance) {
-                console.log("전체 참석 정보가 없습니다.");
-            }
-            console.log("모든 참석 정보가 불러와졌습니다. : ", attendance);
-            return attendance;
-        }
+        return yield models_1.default.GuestInfo.findAll({ where: { userId } });
     }
     catch (error) {
-        const errorMessage = error instanceof Error
-            ? error.message
-            : "알 수 없는 오류가 발생했습니다.";
-        throw new Error(`모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`);
+        throw new Error(`모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${error instanceof Error ? error.message : "알 수 없는 오류"}`);
     }
 });
 exports.findAllAttendances = findAllAttendances;

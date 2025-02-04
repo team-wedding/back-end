@@ -45,34 +45,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMyAttendance = exports.postMyAttendance = exports.getMyAttendance = exports.getAllAttendances = void 0;
 const attendanceRepository = __importStar(require("../repositories/attendanceRepository"));
 // 1. 전체 참석 정보 조회
-const getAllAttendances = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...args_1], void 0, function* (userId, page = 0, size = 0) {
+const getAllAttendances = (userId, page, size) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // 시작 위치 계산
-        const offset = (page - 1) * size;
-        const limit = size;
-        // 페이지네이션 있을 때
-        if (page > 0 && size > 0) {
-            // repo 호출
+        if (page !== undefined && size !== undefined) {
+            const offset = (page - 1) * size;
+            const limit = size;
             const allAttendances = yield attendanceRepository.findAllAttendances(userId, offset, limit);
-            // 전체 데이터 개수 및 총 페이지 계산
             const totalItems = yield attendanceRepository.countAttendances(userId);
             const totalPages = Math.ceil(totalItems / size);
-            return {
-                allAttendances,
-                totalItems,
-                totalPages,
-            };
+            return { allAttendances, totalItems, totalPages };
         }
-        else {
-            // 페이지네이션 안 쓸 때 (page와 size의 기본값이 0)
-            return yield attendanceRepository.findAllAttendances(userId); // 원래 코드
-        }
+        return yield attendanceRepository.findAllAttendances(userId);
     }
     catch (error) {
-        const errorMessage = error instanceof Error
-            ? error.message
-            : "알 수 없는 오류가 발생했습니다.";
-        throw new Error(`모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`);
+        throw new Error(`모든 참석 정보 기록을 불러오는 것에 실패했습니다. : ${error instanceof Error ? error.message : "알 수 없는 오류"}`);
     }
 });
 exports.getAllAttendances = getAllAttendances;
