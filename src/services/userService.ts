@@ -140,9 +140,10 @@ export const deleteUser = async(email: string) : Promise<boolean> => {
 export const myPage = async(email: string) : Promise<any> => {
   try{
     let userInfo = await userRepository.selectUser(email)
-    userInfo = {...userInfo,
+    userInfo = {
       id: userInfo.id,
       email: userInfo.email,
+      name: userInfo.name,
       createdAt: userInfo.createdAt,
       updatedAt: userInfo.updatedAt,
       provider: userInfo.provider

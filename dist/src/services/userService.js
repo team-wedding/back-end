@@ -187,7 +187,14 @@ exports.deleteUser = deleteUser;
 const myPage = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let userInfo = yield userRepository.selectUser(email);
-        userInfo = Object.assign(Object.assign({}, userInfo), { id: userInfo.id, email: userInfo.email, createdAt: userInfo.createdAt, updatedAt: userInfo.updatedAt, provider: userInfo.provider });
+        userInfo = {
+            id: userInfo.id,
+            email: userInfo.email,
+            name: userInfo.name,
+            createdAt: userInfo.createdAt,
+            updatedAt: userInfo.updatedAt,
+            provider: userInfo.provider
+        };
         return userInfo;
     }
     catch (err) {
