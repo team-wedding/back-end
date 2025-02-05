@@ -37,4 +37,4 @@ app.use("/api/imageUpload", imageUploadRouter_1.default);
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log("서버가 실행중입니다.");
-});
+}).keepAliveTimeout = 190000;
