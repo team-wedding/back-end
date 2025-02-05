@@ -2,4 +2,3 @@ node_modules/
 .env
 wedding-invitation.pem
 Heebeom_accessKeys.csv
-dist/
