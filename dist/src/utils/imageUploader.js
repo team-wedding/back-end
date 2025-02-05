@@ -14,7 +14,7 @@ aws_sdk_1.default.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
-const allowedExtensions = ['.png', '.jpg', '.jpeg', '.bmp'];
+const allowedExtensions = ['.png', '.jpg', '.JPG', '.PNG', '.jpeg', '.JPEG', '.bmp', '.BMP'];
 const imageUploader = (0, multer_1.default)({
     storage: (0, multer_s3_1.default)({
         s3: new aws_sdk_1.default.S3(),

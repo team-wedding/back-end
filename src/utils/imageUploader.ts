@@ -13,7 +13,7 @@ AWS.config.update({ //AWS 설정
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-const allowedExtensions = ['.png', '.jpg', '.jpeg', '.bmp'];
+const allowedExtensions = ['.png', '.jpg', '.JPG', '.PNG', '.jpeg', '.JPEG', '.bmp', '.BMP'];
 
 const imageUploader = multer({ // multer 설정
     storage: multers3({
