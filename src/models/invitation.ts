@@ -155,12 +155,12 @@ import { InvitationData } from "../interfaces/invitation.interface";
           createdAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
-            allowNull: true,
+            allowNull: false,
           },
           updatedAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
-            allowNull: true,
+            allowNull: false,
           },
         },
         {
