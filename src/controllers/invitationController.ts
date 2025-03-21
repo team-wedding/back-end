@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import * as invitationService from "../services/invitationService";
 import { InvitationData } from "../interfaces/invitation.interface";
 import { User as IUser } from '../interfaces/user.interface';
-import { ClientError } from "../utils/error";
+import { ClientError, ValidationError } from "../utils/error";
 
 const validateIdParam = (param: string): number => {
     const id = Number(param);
@@ -80,7 +80,11 @@ export const putInvitation: RequestHandler = async (req: Request, res: Response,
         }
         res.status(StatusCodes.BAD_REQUEST).json({ message: '변경된 내용이 없습니다.' });
     } catch (err) {
-        res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
+        if (err instanceof ValidationError) {
+            res.status(StatusCodes.BAD_REQUEST).json({ message: err.message});
+        } else {
+            res.status(StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
+        }
         next(err);
     }
 };

@@ -6,7 +6,8 @@ import { GalleryData } from '../interfaces/gallery.interface';
 import { AccountData } from '../interfaces/account.interface';
 import { ContactData } from '../interfaces/contact.interface';
 import { NoticeData } from '../interfaces/notice.interface';
-import { ClientError } from '../utils/error';
+import { ClientError, ValidationError } from '../utils/error';
+import Invitation from '../models/invitation';
 
 type UpdateInvitation = Partial<Omit<InvitationData, 'id' | 'userId'>>;
 
@@ -97,6 +98,15 @@ export const updateInvitation = async ( userId: number, invitationId: number, up
   try {
     const invitation = await invitationRepository.getInvitationById(invitationId);
 
+    // 필드 체크
+    const attributes = Invitation.getAttributes() as Record<string, any>;
+    const requiredFields = Object.keys(attributes).filter((field) => attributes[field].allowNull === true);
+    const missingFields = requiredFields.filter(field => !(field in updatedData));
+
+    if(missingFields.length > 0) {
+      throw new ValidationError(`청첩장 필수 값이 누락되었습니다: ${missingFields.join(', ')}`);
+    };
+
     if (!invitation) {
       throw new Error('해당 청첩장이 없습니다');
     }
@@ -162,6 +172,9 @@ export const updateInvitation = async ( userId: number, invitationId: number, up
     
     return isUpdated;
   } catch (err: unknown) {
+    if (err instanceof ValidationError) { 
+      throw err;
+    }
     console.error('청첩장 수정 에러:', (err as Error).message);
     throw new Error('청첩장 수정 에러');
   }
