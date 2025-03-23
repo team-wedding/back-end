@@ -6,7 +6,7 @@ import userRouter from "./routes/userRouter";
 import invitationRouter from "./routes/invitationRouter";
 import attendanceRouter from "./routes/attendanceRouter";
 import celebrationMsgRouter from "./routes/celebrationMsgRouter";
-import s3Router from "./routes/S3Router"
+import s3Router from "./routes/s3Router"
 
 // app 정의
 const app: Application = express();
