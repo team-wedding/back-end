@@ -8,20 +8,23 @@ import { ContactData } from '../interfaces/contact.interface';
 import { NoticeData } from '../interfaces/notice.interface';
 import { ClientError, ValidationError } from '../utils/error';
 import Invitation from '../models/invitation';
+import db from '../models'
 
 type UpdateInvitation = Partial<Omit<InvitationData, 'id' | 'userId'>>;
 
 export const createInvitation = async ( userId: number, invitationData: Omit<InvitationData, 'userId'>, 
   calendars: CalendarData[], maps: MapData[], galleries: GalleryData[], accounts: AccountData[], contacts: ContactData[], notices: NoticeData[] ): Promise<{ id: number }> => {
-  try {
-    const newInvitation = await invitationRepository.createInvitation({ ...invitationData, userId });
+    const transaction = await db.sequelize.transaction();
+  
+    try {
+    const newInvitation = await invitationRepository.createInvitation({ ...invitationData, userId }, transaction);
     
     if (calendars && calendars.length > 0) { // 캘린더 정보가 들어오면 저장
       const calendarsWithInvitationId = calendars.map((calendar) => ({
         ...calendar,
         invitationId: newInvitation.id, // 생성된 초대장의 id
       }));
-      await invitationRepository.createCalendar(calendarsWithInvitationId);
+      await invitationRepository.createCalendar(calendarsWithInvitationId, transaction);
     }
 
     if (maps && maps.length > 0) { // 지도, 교통수단 정보가 들어오면 저장
@@ -29,7 +32,7 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
         ...map,
         invitationId: newInvitation.id,
       }))
-      await invitationRepository.createMap(mapsWithInvitationId);
+      await invitationRepository.createMap(mapsWithInvitationId, transaction);
     }
 
     if (galleries && galleries.length > 0) { // 갤러리 정보가 들어오면 저장
@@ -42,7 +45,7 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
         ...gallery,
         invitationId: newInvitation.id,
       }))
-      await invitationRepository.createGallery(galleriesWithInvitationId);
+      await invitationRepository.createGallery(galleriesWithInvitationId, transaction);
     }
 
     if (accounts && accounts.length > 0) { // 계좌 정보가 들어오면 저장
@@ -50,7 +53,7 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
         ...account,
         invitationId: newInvitation.id,
       }))
-      await invitationRepository.createAccount(accountsWithInvitationId);
+      await invitationRepository.createAccount(accountsWithInvitationId, transaction);
     }
 
     if (contacts && contacts.length > 0) { // 연락처 정보가 들어오면 저장
@@ -58,7 +61,7 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
         ...contact,
         invitationId: newInvitation.id,
       }))
-      await invitationRepository.createContact(contactsWithInvitationId);
+      await invitationRepository.createContact(contactsWithInvitationId, transaction);
     }
 
     if (notices && notices.length > 0) { // 공지사항 정보가 들어오면 저장
@@ -66,16 +69,23 @@ export const createInvitation = async ( userId: number, invitationData: Omit<Inv
         ...notice,
         invitationId: newInvitation.id,
       }))
-      await invitationRepository.createNotice(noticesWithInvitationId);
+      await invitationRepository.createNotice(noticesWithInvitationId, transaction);
     }
+
+    await transaction.commit();
 
     return { id: newInvitation.id };
 
-  } catch (err: unknown) {
-    console.error('청첩장 등록 에러:', (err as Error).message);
+  } catch (err) {
+
+    if(transaction) {
+      await transaction.rollback();
+      console.error('청첩장 등록 에러:', (err as Error).message);
+    }
 
     if (err instanceof ClientError) { // ClientError의 경우 따로 처리
       throw err;
+
     }
 
     throw new Error('청첩장 등록 에러');
