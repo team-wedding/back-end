@@ -1,6 +1,6 @@
 import express from 'express';
-import { postImage } from '../controllers/imageUploadController';
-import imageUploader from '../utils/imageUploader';
+import { postImage } from '../controllers/s3Controller';
+import imageUploader from '../utils/s3';
 
 const router = express.Router();
 

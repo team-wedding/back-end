@@ -6,58 +6,59 @@ import { GalleryData } from '../interfaces/gallery.interface';
 import { AccountData } from '../interfaces/account.interface';
 import { ContactData } from '../interfaces/contact.interface';
 import { NoticeData } from '../interfaces/notice.interface';
+import { Transaction } from 'sequelize';
 
-export const createInvitation = async (invitationData: InvitationData) => {
+export const createInvitation = async (invitationData: InvitationData, transaction: Transaction) => {
   try {
-    return await db.Invitation.create(invitationData);  // db.Invitation으로 접근
+    return await db.Invitation.create(invitationData, {transaction});  // db.Invitation으로 접근
   } catch (err) {
     throw new Error(`청첩장 등록 에러: ${(err as Error).message}`);
   }
 };
 
-export const createCalendar = async (calendars: CalendarData[]) => {
+export const createCalendar = async (calendars: CalendarData[], transaction: Transaction) => {
   try {
-    return await db.Calendar.bulkCreate(calendars);
+    return await db.Calendar.bulkCreate(calendars, {transaction});
   } catch (err) {
     throw new Error(`캘린더 등록 에러: ${(err as Error).message}`);
   }
 };
 
-export const createMap = async (maps: MapData[]) => {
+export const createMap = async (maps: MapData[], transaction: Transaction) => {
   try {
-    return await db.Map.bulkCreate(maps);
+    return await db.Map.bulkCreate(maps, {transaction});
   } catch (err) {
     throw new Error(`지도, 교통수단 등록 에러: ${(err as Error).message}`);
   }
 }
 
-export const createGallery = async (galleries : GalleryData[]) => {
+export const createGallery = async (galleries : GalleryData[], transaction: Transaction) => {
   try {
-    return await db.Gallery.bulkCreate(galleries);
+    return await db.Gallery.bulkCreate(galleries, {transaction});
   } catch (err) {
     throw new Error(`갤러리 등록 에러: ${(err as Error).message}`);
   }
 }
 
-export const createAccount = async (accounts : AccountData[]) => {
+export const createAccount = async (accounts : AccountData[], transaction: Transaction) => {
   try {
-    return await db.Account.bulkCreate(accounts);
+    return await db.Account.bulkCreate(accounts, {transaction});
   } catch (err) {
     throw new Error(`계좌 등록 에러: ${(err as Error).message}`);
   }
 }
 
-export const createContact = async (contacts : ContactData[]) => {
+export const createContact = async (contacts : ContactData[], transaction: Transaction) => {
   try {
-    return await db.Contact.bulkCreate(contacts);
+    return await db.Contact.bulkCreate(contacts, {transaction});
   } catch (err) {
     throw new Error(`연락처 등록 에러: ${(err as Error).message}`);
   }
 }
 
-export const createNotice = async (notices : NoticeData[]) => {
+export const createNotice = async (notices : NoticeData[], transaction: Transaction) => {
   try {
-    return await db.Notice.bulkCreate(notices);
+    return await db.Notice.bulkCreate(notices, {transaction});
   } catch (err) {
     throw new Error(`공지사항 등록 에러: ${(err as Error).message}`);
   }

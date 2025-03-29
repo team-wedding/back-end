@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-AWS.config.update({ //AWS 설정
+AWS.config.update({ // AWS 설정
     region: process.env.AWS_REGION,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
@@ -25,7 +25,7 @@ const imageUploader = multer({ // multer 설정
             if (!allowedExtensions.includes(extension)) {
                 return callback(new Error('wrong extension'));
             }
-            callback(null, `${uploadDirectory}/${Date.now()}_${file.originalname}`); //저장될 S3의 저장소 경로 설정
+            callback(null, `${uploadDirectory}/${Date.now()}_${file.originalname}`); // 저장될 S3의 저장소 경로 설정
         },
         acl: 'public-read-write',
     }),
