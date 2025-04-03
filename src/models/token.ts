@@ -18,6 +18,8 @@ class Token extends Model<IToken>{
         type: DataTypes.INTEGER,
         allowNull: false,
         unique: true,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       token: {
         type: DataTypes.STRING(400),
