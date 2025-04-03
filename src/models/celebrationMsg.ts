@@ -29,6 +29,8 @@ class CelebrationMsg extends Model<celebrationMsgData> {
             key: "id",
           },
           allowNull: false,
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
         },
         invitationId: {
           type: DataTypes.INTEGER,
