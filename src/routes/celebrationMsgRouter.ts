@@ -7,6 +7,7 @@ import {
   postMyCelebrationMsg,
   putMyCelebrationMsg,
   deleteMyCelebrationMsg,
+  deleteCelebrationMsgByAdmin,
 } from "../controllers/celebrationMsgController";
 import { authToken } from "../middlewares/authToken";
 
@@ -22,7 +23,10 @@ router.post("/", postMyCelebrationMsg);
 // 4. 개인 축하메세지 수정
 router.put("/:id", putMyCelebrationMsg);
 
-// 4. 개인 축하메세지 삭제
+// 5. 개인 축하메세지 삭제
 router.delete("/:id", deleteMyCelebrationMsg);
+
+// 6. 개인 축하메세지 어드민 삭제
+router.delete("/admin/:id", authToken, deleteCelebrationMsgByAdmin);
 
 export default router;
