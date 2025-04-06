@@ -173,3 +173,35 @@ export const removeMyCelebrationMsgByPassword = async (
     );
   }
 };
+
+// 6. 관리자 모드 포토톡 삭제 기능 + delete
+export const removeCelebrationMsgByAdmin = async (
+  id: number
+): Promise<boolean> => {
+  try {
+    const celebrationMsg = await db.CelebrationMsg.findOne({
+      where: { id },
+    });
+
+    if (!celebrationMsg) {
+      console.log(
+        `다음 관리자 아이디로 삭제할 축하메세지 정보가 없습니다. id : ${id}`
+      );
+      return false;
+    }
+
+    await db.CelebrationMsg.destroy({ where: { id } });
+    console.log(
+      `다음 관리자 아이디로 해당 축하메세지 정보를 성공적으로 삭제했습니다. id : ${id}`
+    );
+    return true;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    throw new Error(
+      `다음 관리자 아이디로 해당 축하메세지 정보 삭제에 실패했습니다. (id : ${id}) : ${errorMessage}`
+    );
+  }
+};

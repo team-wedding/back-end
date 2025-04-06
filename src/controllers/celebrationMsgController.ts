@@ -177,3 +177,39 @@ export const deleteMyCelebrationMsg = async (
     res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
   }
 };
+
+// 관리자 모드 포토톡 삭제 기능 + delete
+export const deleteCelebrationMsgByAdmin = async (
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const userInfo: IUser = req.userInfo;
+
+    if (!userInfo) {
+      res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: "로그인이 필요합니다." });
+      return;
+    }
+
+    const { id } = req.params;
+    const isDeleted = await celebrationMsgService.removeCelebrationMsgByAdmin(
+      Number(id)
+    );
+
+    if (!isDeleted) {
+      res
+        .status(404)
+        .json({ message: "삭제할 축하메세지를 찾을 수 없습니다." });
+      return;
+    }
+
+    res
+      .status(200)
+      .json({ message: "축하메세지가 성공적으로 삭제되었습니다." });
+  } catch (error) {
+    console.error(error);
+    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+  }
+};
