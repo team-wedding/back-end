@@ -26,7 +26,8 @@ export const postInvitation: RequestHandler = async (req: Request, res: Response
 
         if (result) {
             res.status(StatusCodes.CREATED).json({ 
-                message: '청첩장이 생성되었습니다.'
+                message: '청첩장이 생성되었습니다.',
+                id: result.id
             });
             return;
         } 
