@@ -22,7 +22,7 @@ export const postImage: RequestHandler = async (req: Request, res: Response): Pr
   }
 };
 
-export const deleteImageById = async (req: Request, res: Response): Promise<void> => {
+export const deleteInvitationImageById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = Number(req.params.id);
 
