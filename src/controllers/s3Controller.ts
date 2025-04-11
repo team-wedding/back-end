@@ -92,3 +92,23 @@ export const deleteInvitationImageById = async (req: Request, res: Response): Pr
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
 };
+
+export const deleteCelebrationMsgImageById = async (req: Request, res: Response): Promise<void> => {
+
+};
+
+export const updateInvitationImageById = async (req: Request, res: Response): Promise<void> => {
+
+};
+
+export const updateGalleryImageById = async (req: Request, res: Response): Promise<void> => {
+
+}; // index 필요
+
+export const updateNoticeImageById = async (req: Request, res: Response): Promise<void> => {
+
+};
+
+export const updateCelebrationMsgImageById = async (req: Request, res: Response): Promise<void> => {
+
+}; // index 필요
