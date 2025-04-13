@@ -3,6 +3,8 @@ import { StatusCodes } from "http-status-codes";
 import { deleteImageFromS3 } from "../utils/s3";
 import { extractS3KeyFromUrl } from "../utils/s3";
 import { getInvitationById } from "../repositories/invitationRepository";
+import db from '../models';
+
 
 export const postImage: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -94,7 +96,68 @@ export const deleteInvitationImageById = async (req: Request, res: Response): Pr
 };
 
 export const deleteCelebrationMsgImageById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = Number(req.params.id);
 
+    if (isNaN(id)) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "유효한 포토톡 ID가 필요합니다." });
+      return;
+    }
+
+    const celebrationMsg = await db.CelebrationMsg.findOne({
+      where: { id },
+    });
+
+    if (!celebrationMsg) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "해당 축하 메시지가 존재하지 않습니다." });
+      return;
+    }
+
+    if (!celebrationMsg.imageUrl) {
+      res.status(StatusCodes.OK).json({ message: "삭제할 이미지가 존재하지 않습니다." });
+      return;
+    }
+
+    const urlsToDelete: string[] = []; 
+
+    try {
+      const parsedImages = JSON.parse(celebrationMsg.imageUrl);
+
+      if (Array.isArray(parsedImages)) {
+        parsedImages.forEach((imgUrl: any) => {
+          if (typeof imgUrl === 'string') {
+            urlsToDelete.push(imgUrl);
+          }
+        });
+      } else {
+        console.warn("imageUrl이 배열이 아닙니다.:", celebrationMsg.imageUrl);
+      }
+    } catch (err) {
+      console.warn("imageUrl JSON 파싱 실패:", celebrationMsg.imageUrl);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "이미지 정보를 파싱할 수 없습니다." });
+      return;
+    }
+
+    for (const url of urlsToDelete) {
+      const key = extractS3KeyFromUrl(url);
+      if (!key) {
+        console.warn("S3 key 추출 실패:", url);
+        continue;
+      }
+    
+      try {
+        await deleteImageFromS3(key);
+        console.log(`삭제 성공: ${key}`);
+      } catch (err) {
+        console.error(`삭제 실패 (${key}):`, (err as Error).message);
+      }
+    }    
+
+    res.status(StatusCodes.OK).json({ message: "포토톡 이미지들이 성공적으로 삭제되었습니다." });
+  } catch (error: any) {
+    console.log('이미지 삭제 오류', error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message: error.message});
+  }
 };
 
 export const updateInvitationImageById = async (req: Request, res: Response): Promise<void> => {
