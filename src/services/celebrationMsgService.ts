@@ -73,7 +73,7 @@ export const postMyCelebrationMsg = async (
   celebrationMsgData: celebrationMsgData
 ) => {
   try {
-    if(celebrationMsgData.imageUrl.length > 10) {
+    if (celebrationMsgData.imageUrl.length > 10) {
       throw new ClientError("이미지 개수는 최대 10개까지 가능합니다.");
     }
     return await celebrationMsgRepository.createMyCelebrationMsg(
@@ -134,6 +134,38 @@ export const deleteMyCelebrationMsg = async (
         : "알 수 없는 오류가 발생했습니다.";
     throw new Error(
       `다음 이름과 비밀번호로 기록된 축하메세지 정보 삭제에 실패했습니다. name : ${name}, password : ${password} : ${errorMessage}`
+    );
+  }
+};
+
+// 6. 관리자 모드 포토톡 삭제 기능 + delete    // 토큰에서 userId 받아와서 일치하는 경우 -> 어드민 api 수행 -> 바로 삭제 가능하게
+export const removeCelebrationMsgByAdmin = async (
+  id: number
+): Promise<boolean> => {
+  try {
+    console.log(
+      `관리자의 권한으로 축하메세지 정보 삭제 시도중입니다.. id : ${id}`
+    );
+
+    const celebrationMsg =
+      await celebrationMsgRepository.removeCelebrationMsgByAdmin(id);
+
+    if (!celebrationMsg) {
+      console.log(`삭제할 축하메세지 정보가 없습니다. id : ${id}`);
+      return false;
+    }
+
+    console.log(`축하메세지 삭제에 성공했습니다. id : ${id}`);
+
+    return true;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+
+    throw new Error(
+      `관리자로 축하메세지 삭제에 실패했습니다. (id: ${id}) : ${errorMessage}`
     );
   }
 };

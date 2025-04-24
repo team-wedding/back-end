@@ -57,96 +57,96 @@ import { InvitationData } from "../interfaces/invitation.interface";
           },
           groomName: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           brideName: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           date: {
             type: DataTypes.JSON,
-            allowNull: false,
+            allowNull: true,
           },
           location: {
             type: DataTypes.JSON,
-            allowNull: false,
+            allowNull: true,
           },
           imgUrl: {
             type: DataTypes.STRING(999),
-            allowNull: false,
+            allowNull: true,
           },
           greetingTitle: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           greetingContent: {
             type: DataTypes.TEXT,
-            allowNull: false,
+            allowNull: true,
           },
           groomFatherName: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           groomMotherName: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           brideFatherName: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           brideMotherName: {
             type: DataTypes.STRING(10),
-            allowNull: false,
+            allowNull: true,
           },
           weddingTime: {
             type: DataTypes.JSON,
-            allowNull: false,
+            allowNull: true,
           },
           groomFatherAlive: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           groomMotherAlive: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           brideFatherAlive: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           brideMotherAlive: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           backgroundColor: {
             type: DataTypes.STRING(20),
-            allowNull: false,
+            allowNull: true,
           },
           attendanceTitle: {
             type: DataTypes.STRING(20),
-            allowNull: false,
+            allowNull: true,
           },
           attendanceContent: {
             type: DataTypes.TEXT,
-            allowNull: false,
+            allowNull: true,
           },
           attendanceIsDining: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           attendance: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           fontSize: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
             defaultValue: false,
           },
           font: {
             type: DataTypes.STRING(20),
-            allowNull: false,
+            allowNull: true,
           },
           audio: {
             type: DataTypes.INTEGER,
