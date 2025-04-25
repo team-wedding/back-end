@@ -10,7 +10,7 @@ export const signup: RequestHandler = async (req: Request, res: Response): Promi
       res.status(201).json({message:'가입완료'});
       return;
     }
-    res.status(StatusCodes.BAD_REQUEST).json({message:'중복된 이메일입니다.'});
+    res.status(StatusCodes.BAD_REQUEST).json({message:'이미 해당 email로 회원가입된 이력있음.'});
     return;
   }catch(err){
     console.log(err)

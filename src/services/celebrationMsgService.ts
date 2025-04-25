@@ -45,6 +45,48 @@ export const getAllCelebrationMsgs = async (
   }
 };
 
+export const getAllCelebrationMsgsForGuest = async (
+  invitationId: number,
+  page: number,
+  size: number
+) => {
+  try {
+    // 시작 위치 계산
+    const offset = (page - 1) * size;
+    const limit = size;
+
+    // repo 호출
+    const allCelebrationMsgs =
+      await celebrationMsgRepository.findAllcelebrationMsgsForGuest(
+        invitationId,
+        offset,
+        limit
+      );
+
+    // 전체 데이터 개수 및 총 페이지 계산
+    const totalItems = await celebrationMsgRepository.countCelebrationMsgsForGuest(
+      invitationId
+    );
+    const totalPages = Math.ceil(totalItems / size);
+
+    return {
+      allCelebrationMsgs,
+      totalItems,
+      totalPages,
+    };
+
+    // return await celebrationMsgRepository.findAllcelebrationMsgs(userId);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    throw new Error(
+      `모든 축하메세지 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`
+    );
+  }
+};
+
 // 2. 개인이 작성한 축하메세지 조회 + get
 export const getMyCelebrationMsg = async (
   id: number,

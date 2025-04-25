@@ -32,10 +32,47 @@ export const findAllcelebrationMsgs = async (
   }
 };
 
+// 1-1 전체 축하메세지 정보 조회 (하객용)
+export const findAllcelebrationMsgsForGuest = async (
+  invitationId: number,
+  offset: number,
+  limit: number
+): Promise<CelebrationMsg[]> => {
+  try {
+    console.log("모든 축하메세지 기록을 불러오는 중입니다...");
+    const celebrationMsg = await db.CelebrationMsg.findAll({
+      where: { invitationId },
+      offset,
+      limit,
+      order: [["id", "DESC"]],
+    });
+    if (!celebrationMsg) {
+      console.log("전체 축하메세지 정보가 없습니다.");
+    }
+    console.log("모든 축하메세지 기록이 불러와졌습니다. : ", celebrationMsg);
+    return celebrationMsg;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    throw new Error(
+      `모든 축하메세지 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`
+    );
+  }
+};
+
 // 개수 세기
 export const countCelebrationMsgs = async (userId: number) => {
   return await CelebrationMsg.count({
     where: { userId },
+  });
+};
+
+// 개수 세기 (하객용)
+export const countCelebrationMsgsForGuest = async (invitationId: number) => {
+  return await CelebrationMsg.count({
+    where: { invitationId },
   });
 };
 
@@ -106,15 +143,17 @@ export const updateCelebrationMsgByPassword = async (
 ): Promise<CelebrationMsg | null> => {
   try {
     console.log(
-      `다음 이름과 비밀번호를 통해 축하메세지 수정 시도중입니다.. name : ${name}, password : ${password}`
+      `다음 이름과 비밀번호를 통해 축하메세지 수정 시도중입니다..`
     );
 
     const celebrationMsg = await db.CelebrationMsg.findOne({
-      where: { id, name, password },
+      where: { id },
     });
 
     if (celebrationMsg) {
       celebrationMsg.message = newMessage;
+      celebrationMsg.name = name;
+      celebrationMsg.password = password;
       const updatedCelebrationMsg = await celebrationMsg.save();
 
       console.log(

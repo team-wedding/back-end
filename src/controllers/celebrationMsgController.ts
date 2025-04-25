@@ -38,6 +38,37 @@ export const getAllCelebrationMsgs = async (
   }
 };
 
+// 1-1. 전체 축하메세지 조회(하객용) + get
+export const getAllCelebrationMsgsForGuest = async (
+  req: Request<{ id: number }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "invitationId가 존재하지 않습니다. (잘못된 요청)" });
+      return;
+    }
+
+    // 페이지네이션 파라미터 받기
+    const page = parseInt(req.query.page as string);
+    const size = parseInt(req.query.size as string);
+
+    const { allCelebrationMsgs, totalItems, totalPages } =
+      await celebrationMsgService.getAllCelebrationMsgsForGuest(id, page, size);
+
+    res
+      .status(StatusCodes.OK)
+      .json({ allCelebrationMsgs, totalItems, totalPages, currentPage: page });
+  } catch (err: any) {
+    console.error(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "서버 에러" });
+  }
+};
+
 // 2. 개인이 작성한 축하메세지 조회 + get
 export const getMyCelebrationMsg = async (
   req: Request<{ id: number }>,
