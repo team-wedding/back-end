@@ -5,7 +5,6 @@ import { extractS3KeyFromUrl } from "../utils/s3";
 import { getInvitationById } from "../repositories/invitationRepository";
 import db from '../models';
 
-
 export const postImage: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const files = req.files as Express.MulterS3.File[];
@@ -165,6 +164,7 @@ export const updateInvitationImageById = async (req: Request, res: Response): Pr
   // 2) 빼낸 s3 url에 접근해서 이미지 삭제
   // 3) form-data로 받아온 이미지를 새로 s3에 업로드하고 반환(이는 postImage 활용)
   // 4) 반환한 새로운 s3 url 값을 res로 전달
+  // 청첩장, 공지사항, 갤러리, 포토톡 모두 같은 로직
   try {
     // 1)
     const id = Number(req.params.id);
@@ -226,11 +226,10 @@ export const updateInvitationImageById = async (req: Request, res: Response): Pr
 
 export const updateNoticeImageById = async (req: Request, res: Response): Promise<void> => {
   try {
-    // 1)
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: "유효한 초대장 ID가 필요합니다." });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "유효한 공지사항 ID가 필요합니다." });
       return;
     }
 
@@ -250,7 +249,6 @@ export const updateNoticeImageById = async (req: Request, res: Response): Promis
       return;
     }
     
-    // 2)
     const key = extractS3KeyFromUrl(oldImgUrl);
 
     if(!key) {
@@ -267,7 +265,6 @@ export const updateNoticeImageById = async (req: Request, res: Response): Promis
       return;
     }
 
-    // 3)
     const files = req.files as Express.MulterS3.File[];
 
     if (!files || files.length === 0) {
@@ -275,7 +272,6 @@ export const updateNoticeImageById = async (req: Request, res: Response): Promis
       return;
     }
 
-    // 4)
     const imageUrls = files.map(file => file.location); // 이미지가 저장된 경로 반환
 
     console.log(`새로운 이미지 등록 완료`);
@@ -287,9 +283,123 @@ export const updateNoticeImageById = async (req: Request, res: Response): Promis
 };
 
 export const updateGalleryImageById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = Number(req.params.id);
+    const index = Number(req.params.index);
 
-}; // index 필요
+    if (isNaN(id) || isNaN(index)) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "유효한 갤러리 ID와 Index가 필요합니다." });
+      return;
+    }
+
+    const gallery = await db.Gallery.findOne({ where: { id: id } });
+
+    if (!gallery) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "해당 갤러리가 존재하지 않습니다." });
+      return;
+    }
+
+    const images: string[] = Array.isArray(gallery.images)
+      ? gallery.images
+      : JSON.parse(gallery.images); // 문자열 저장일 경우 파싱
+
+    const oldImgUrl = images[index];
+
+    if (!oldImgUrl) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "해당 인덱스에 이미지가 존재하지 않습니다." });
+      return;
+    }
+
+    const key = extractS3KeyFromUrl(oldImgUrl);
+
+    if (!key) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "S3 이미지 키 추출 실패" });
+      return;
+    }
+
+    try {
+      await deleteImageFromS3(key);
+      console.log(`기존 이미지 삭제 완료: ${key}`);
+    } catch (err) {
+      console.error("기존 이미지 삭제 실패:", err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "기존 이미지 삭제 중 오류가 발생했습니다." });
+      return;
+    }
+
+    const files = req.files as Express.MulterS3.File[];
+
+    if (!files || files.length === 0) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "새로운 이미지 파일이 필요합니다." });
+      return;
+    }
+
+    const newImageUrl = files[0].location;
+
+    console.log(`새로운 이미지 업로드 완료`);
+    res.status(StatusCodes.OK).json({ newImageUrl }); 
+  } catch(error: any) {
+    console.error("갤러리 이미지 수정 오류:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  };
+}; 
 
 export const updateCelebrationMsgImageById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = Number(req.params.id);
+    const index = Number(req.params.index);
 
-}; // index 필요
+    if (isNaN(id) || isNaN(index)) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "유효한 포토톡 ID와 Index가 필요합니다." });
+      return;
+    }
+
+    const celebrationMsg = await db.CelebrationMsg.findOne({ where: { id: id } });
+
+    if (!celebrationMsg) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "해당 포토톡이 존재하지 않습니다." });
+      return;
+    }
+
+    const images: string[] = Array.isArray(celebrationMsg.imageUrl)
+      ? celebrationMsg.imageUrl
+      : JSON.parse(celebrationMsg.imageUrl); // 문자열 저장일 경우 파싱
+
+    const oldImgUrl = images[index];
+
+    if (!oldImgUrl) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "해당 인덱스에 이미지가 존재하지 않습니다." });
+      return;
+    }
+
+    const key = extractS3KeyFromUrl(oldImgUrl);
+
+    if (!key) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "S3 이미지 키 추출 실패" });
+      return;
+    }
+
+    try {
+      await deleteImageFromS3(key);
+      console.log(`기존 이미지 삭제 완료: ${key}`);
+    } catch (err) {
+      console.error("기존 이미지 삭제 실패:", err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "기존 이미지 삭제 중 오류가 발생했습니다." });
+      return;
+    }
+
+    const files = req.files as Express.MulterS3.File[];
+
+    if (!files || files.length === 0) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "새로운 이미지 파일이 필요합니다." });
+      return;
+    }
+
+    const newImageUrl = files[0].location;
+
+    console.log(`새로운 이미지 업로드 완료`);
+    res.status(StatusCodes.OK).json({ newImageUrl }); 
+  } catch(error: any) {
+    console.error("포토톡 이미지 수정 오류:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  };
+}; 
