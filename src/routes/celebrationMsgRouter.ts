@@ -8,11 +8,15 @@ import {
   putMyCelebrationMsg,
   deleteMyCelebrationMsg,
   deleteCelebrationMsgByAdmin,
+  getAllCelebrationMsgsForGuest
 } from "../controllers/celebrationMsgController";
 import { authToken } from "../middlewares/authToken";
 
 // 1. 전체 축하메세지 조회
 router.get("/", authToken, getAllCelebrationMsgs);
+
+//1-2. 전체 축하메세지 조회(하객용)
+router.get("/guest/:id", getAllCelebrationMsgsForGuest);
 
 // 2. 개인 축하메세지 조회
 router.get("/:id", getMyCelebrationMsg);
