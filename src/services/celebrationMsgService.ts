@@ -46,7 +46,7 @@ export const getAllCelebrationMsgs = async (
 };
 
 export const getAllCelebrationMsgsForGuest = async (
-  invitationId: number,
+  userId: number,
   page: number,
   size: number
 ) => {
@@ -58,14 +58,14 @@ export const getAllCelebrationMsgsForGuest = async (
     // repo 호출
     const allCelebrationMsgs =
       await celebrationMsgRepository.findAllcelebrationMsgsForGuest(
-        invitationId,
+        userId,
         offset,
         limit
       );
 
     // 전체 데이터 개수 및 총 페이지 계산
     const totalItems = await celebrationMsgRepository.countCelebrationMsgsForGuest(
-      invitationId
+      userId
     );
     const totalPages = Math.ceil(totalItems / size);
 
@@ -75,7 +75,6 @@ export const getAllCelebrationMsgsForGuest = async (
       totalPages,
     };
 
-    // return await celebrationMsgRepository.findAllcelebrationMsgs(userId);
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error

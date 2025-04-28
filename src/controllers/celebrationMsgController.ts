@@ -49,7 +49,7 @@ export const getAllCelebrationMsgsForGuest = async (
     if (!id) {
       res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "invitationId가 존재하지 않습니다. (잘못된 요청)" });
+        .json({ message: "userId가 존재하지 않습니다. (잘못된 요청)" });
       return;
     }
 

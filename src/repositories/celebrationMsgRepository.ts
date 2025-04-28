@@ -34,14 +34,14 @@ export const findAllcelebrationMsgs = async (
 
 // 1-1 전체 축하메세지 정보 조회 (하객용)
 export const findAllcelebrationMsgsForGuest = async (
-  invitationId: number,
+  userId: number,
   offset: number,
   limit: number
 ): Promise<CelebrationMsg[]> => {
   try {
     console.log("모든 축하메세지 기록을 불러오는 중입니다...");
     const celebrationMsg = await db.CelebrationMsg.findAll({
-      where: { invitationId },
+      where: { userId },
       offset,
       limit,
       order: [["id", "DESC"]],
@@ -70,9 +70,9 @@ export const countCelebrationMsgs = async (userId: number) => {
 };
 
 // 개수 세기 (하객용)
-export const countCelebrationMsgsForGuest = async (invitationId: number) => {
+export const countCelebrationMsgsForGuest = async (userId: number) => {
   return await CelebrationMsg.count({
-    where: { invitationId },
+    where: { userId },
   });
 };
 
