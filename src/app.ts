@@ -6,7 +6,9 @@ import userRouter from "./routes/userRouter";
 import invitationRouter from "./routes/invitationRouter";
 import attendanceRouter from "./routes/attendanceRouter";
 import celebrationMsgRouter from "./routes/celebrationMsgRouter";
-import s3Router from "./routes/s3Router"
+import s3Router from "./routes/s3Router";
+
+import { setupSwagger } from "../config/swagger";
 
 // app 정의
 const app: Application = express();
@@ -14,11 +16,24 @@ const app: Application = express();
 // 미들웨어 설정
 app.use(express.json());
 dotenv.config();
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000','https://wedding-front-xi.vercel.app/','https://woogyeol.vercel.app'], credentials: true, exposedHeaders: ['Authorization'], }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://wedding-front-xi.vercel.app/",
+      "https://woogyeol.vercel.app",
+    ],
+    credentials: true,
+    exposedHeaders: ["Authorization"],
+  })
+);
+
+setupSwagger(app);
 
 // sequelize db 연결
 sequelize
-  .sync({alter : true})
+  .sync({ alter: true })
   .then(() => {
     console.log("데이터베이스 연결 및 최신화 성공! ");
   })
@@ -37,4 +52,5 @@ app.use("/api/s3", s3Router);
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log("서버가 실행중입니다.");
+  console.log(`Swagger 문서 : http://localhost:${PORT}/api-docs`);
 }).keepAliveTimeout = 190_000;
