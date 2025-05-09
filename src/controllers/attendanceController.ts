@@ -47,7 +47,7 @@ export const getAllAttendances = async (
       .json({ message: "전체 참석 정보가 존재하지 않습니다." });
   } catch (error) {
     res
-      .status(StatusCodes.BAD_REQUEST)
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "서버 에러, 서버를 다시 확인해주세요." });
   }
 };
@@ -74,7 +74,9 @@ export const getMyAttendance = async (
     }
   } catch (err: any) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
 
@@ -113,7 +115,7 @@ export const postMyAttendance = async (
   } catch (err: any) {
     console.error(err);
     res
-      .status(StatusCodes.BAD_REQUEST)
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: err.message || "서버 에러" });
   }
 };
@@ -143,6 +145,8 @@ export const deleteMyAttendance = async (
     }
   } catch (err) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };

@@ -34,7 +34,9 @@ export const getAllCelebrationMsgs = async (
       .json({ allCelebrationMsgs, totalItems, totalPages, currentPage: page });
   } catch (err: any) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
 
@@ -65,7 +67,9 @@ export const getAllCelebrationMsgsForGuest = async (
       .json({ allCelebrationMsgs, totalItems, totalPages, currentPage: page });
   } catch (err: any) {
     console.error(err);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
 
@@ -91,7 +95,9 @@ export const getMyCelebrationMsg = async (
     }
   } catch (err: any) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
 
@@ -141,7 +147,7 @@ export const postMyCelebrationMsg = async (
     } else {
       console.error(err);
       res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ message: err.message || "서버 에러" });
     }
   }
@@ -176,7 +182,9 @@ export const putMyCelebrationMsg = async (
     }
   } catch (err) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
 
@@ -205,7 +213,9 @@ export const deleteMyCelebrationMsg = async (
     }
   } catch (err) {
     console.error(err);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
 
@@ -241,6 +251,8 @@ export const deleteCelebrationMsgByAdmin = async (
       .json({ message: "축하메세지가 성공적으로 삭제되었습니다." });
   } catch (error) {
     console.error(error);
-    res.status(StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
   }
 };
