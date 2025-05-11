@@ -65,4 +65,5 @@ db.CelebrationMsg.belongsTo(db.Invitation, { foreignKey: 'invitationId', as: 'ce
 db.CelebrationMsg.belongsTo(db.User, { foreignKey: "userId" });
 db.User.hasOne(db.Token, { foreignKey: 'userId' });
 db.Token.belongsTo(db.User, { foreignKey: 'userId' });
+db.sequelize = sequelize;
 exports.default = db;

@@ -18,6 +18,8 @@ class GuestInfo extends sequelize_1.Model {
                     key: "id",
                 },
                 allowNull: false,
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
             },
             invitationId: {
                 type: sequelize_1.DataTypes.INTEGER,
