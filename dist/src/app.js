@@ -11,7 +11,7 @@ const userRouter_1 = __importDefault(require("./routes/userRouter"));
 const invitationRouter_1 = __importDefault(require("./routes/invitationRouter"));
 const attendanceRouter_1 = __importDefault(require("./routes/attendanceRouter"));
 const celebrationMsgRouter_1 = __importDefault(require("./routes/celebrationMsgRouter"));
-const imageUploadRouter_1 = __importDefault(require("./routes/imageUploadRouter"));
+const s3Router_1 = __importDefault(require("./routes/s3Router"));
 // app 정의
 const app = (0, express_1.default)();
 // 미들웨어 설정
@@ -32,7 +32,7 @@ app.use("/api/users", userRouter_1.default);
 app.use("/api/invitations", invitationRouter_1.default);
 app.use("/api/attendances", attendanceRouter_1.default);
 app.use("/api/celebrationMsgs", celebrationMsgRouter_1.default);
-app.use("/api/imageUpload", imageUploadRouter_1.default);
+app.use("/api/s3", s3Router_1.default);
 // 서버 실행
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

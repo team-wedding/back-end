@@ -27,96 +27,96 @@ class Invitation extends sequelize_1.Model {
             },
             groomName: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             brideName: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             date: {
                 type: sequelize_1.DataTypes.JSON,
-                allowNull: false,
+                allowNull: true,
             },
             location: {
                 type: sequelize_1.DataTypes.JSON,
-                allowNull: false,
+                allowNull: true,
             },
             imgUrl: {
                 type: sequelize_1.DataTypes.STRING(999),
-                allowNull: false,
+                allowNull: true,
             },
             greetingTitle: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             greetingContent: {
                 type: sequelize_1.DataTypes.TEXT,
-                allowNull: false,
+                allowNull: true,
             },
             groomFatherName: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             groomMotherName: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             brideFatherName: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             brideMotherName: {
                 type: sequelize_1.DataTypes.STRING(10),
-                allowNull: false,
+                allowNull: true,
             },
             weddingTime: {
                 type: sequelize_1.DataTypes.JSON,
-                allowNull: false,
+                allowNull: true,
             },
             groomFatherAlive: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             groomMotherAlive: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             brideFatherAlive: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             brideMotherAlive: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             backgroundColor: {
                 type: sequelize_1.DataTypes.STRING(20),
-                allowNull: false,
+                allowNull: true,
             },
             attendanceTitle: {
                 type: sequelize_1.DataTypes.STRING(20),
-                allowNull: false,
+                allowNull: true,
             },
             attendanceContent: {
                 type: sequelize_1.DataTypes.TEXT,
-                allowNull: false,
+                allowNull: true,
             },
             attendanceIsDining: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             attendance: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             fontSize: {
                 type: sequelize_1.DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
                 defaultValue: false,
             },
             font: {
                 type: sequelize_1.DataTypes.STRING(20),
-                allowNull: false,
+                allowNull: true,
             },
             audio: {
                 type: sequelize_1.DataTypes.INTEGER,

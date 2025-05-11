@@ -62,7 +62,8 @@ const postInvitation = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         const result = yield invitationService.createInvitation(userInfo.id, invitationData, calendars, maps, galleries, accounts, contacts, notices);
         if (result) {
             res.status(http_status_codes_1.StatusCodes.CREATED).json({
-                message: '청첩장이 생성되었습니다.'
+                message: '청첩장이 생성되었습니다.',
+                id: result.id
             });
             return;
         }
@@ -115,7 +116,12 @@ const putInvitation = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({ message: '변경된 내용이 없습니다.' });
     }
     catch (err) {
-        res.status(http_status_codes_1.StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
+        if (err instanceof error_1.ValidationError) {
+            res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({ message: err.message });
+        }
+        else {
+            res.status(http_status_codes_1.StatusCodes.NOT_FOUND).json({ message: '해당 청첩장이 없습니다' });
+        }
         next(err);
     }
 });

@@ -14,63 +14,63 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteNotice = exports.deleteContact = exports.deleteAccount = exports.deleteGallery = exports.deleteMap = exports.deleteCalendar = exports.deleteInvitation = exports.updateNotice = exports.updateContact = exports.updateAccount = exports.updateGallery = exports.updateMap = exports.updateCalendar = exports.updateInvitation = exports.getInvitationsByUserId = exports.getInvitationById = exports.createNotice = exports.createContact = exports.createAccount = exports.createGallery = exports.createMap = exports.createCalendar = exports.createInvitation = void 0;
 const models_1 = __importDefault(require("../models"));
-const createInvitation = (invitationData) => __awaiter(void 0, void 0, void 0, function* () {
+const createInvitation = (invitationData, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Invitation.create(invitationData); // db.Invitation으로 접근
+        return yield models_1.default.Invitation.create(invitationData, { transaction }); // db.Invitation으로 접근
     }
     catch (err) {
         throw new Error(`청첩장 등록 에러: ${err.message}`);
     }
 });
 exports.createInvitation = createInvitation;
-const createCalendar = (calendars) => __awaiter(void 0, void 0, void 0, function* () {
+const createCalendar = (calendars, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Calendar.bulkCreate(calendars);
+        return yield models_1.default.Calendar.bulkCreate(calendars, { transaction });
     }
     catch (err) {
         throw new Error(`캘린더 등록 에러: ${err.message}`);
     }
 });
 exports.createCalendar = createCalendar;
-const createMap = (maps) => __awaiter(void 0, void 0, void 0, function* () {
+const createMap = (maps, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Map.bulkCreate(maps);
+        return yield models_1.default.Map.bulkCreate(maps, { transaction });
     }
     catch (err) {
         throw new Error(`지도, 교통수단 등록 에러: ${err.message}`);
     }
 });
 exports.createMap = createMap;
-const createGallery = (galleries) => __awaiter(void 0, void 0, void 0, function* () {
+const createGallery = (galleries, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Gallery.bulkCreate(galleries);
+        return yield models_1.default.Gallery.bulkCreate(galleries, { transaction });
     }
     catch (err) {
         throw new Error(`갤러리 등록 에러: ${err.message}`);
     }
 });
 exports.createGallery = createGallery;
-const createAccount = (accounts) => __awaiter(void 0, void 0, void 0, function* () {
+const createAccount = (accounts, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Account.bulkCreate(accounts);
+        return yield models_1.default.Account.bulkCreate(accounts, { transaction });
     }
     catch (err) {
         throw new Error(`계좌 등록 에러: ${err.message}`);
     }
 });
 exports.createAccount = createAccount;
-const createContact = (contacts) => __awaiter(void 0, void 0, void 0, function* () {
+const createContact = (contacts, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Contact.bulkCreate(contacts);
+        return yield models_1.default.Contact.bulkCreate(contacts, { transaction });
     }
     catch (err) {
         throw new Error(`연락처 등록 에러: ${err.message}`);
     }
 });
 exports.createContact = createContact;
-const createNotice = (notices) => __awaiter(void 0, void 0, void 0, function* () {
+const createNotice = (notices, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield models_1.default.Notice.bulkCreate(notices);
+        return yield models_1.default.Notice.bulkCreate(notices, { transaction });
     }
     catch (err) {
         throw new Error(`공지사항 등록 에러: ${err.message}`);
