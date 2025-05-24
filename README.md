@@ -77,12 +77,39 @@ AWS_REGION =
 ---
 
 ## 📄 API 명세서
-- swagger: https://app.swaggerhub.com/apis-docs/GHOONGHOON_1/wedding/1.0.0
+- swagger: https://app.swaggerhub.com/apis-docs/GHOONGHOON_1/wedding/1.0.0 or 서버 실행 후 http://localhost:${PORT}/api-docs
 - notion: https://motley-sundae-448.notion.site/API-19e9673ec7978153a9b7ef2992ff606c
 
 ---
 
 ## 🧑‍💻 개발자 정보
-- 💂🏻‍♂️ [이종훈](https://github.com/jonghoon-L)
-- 🦸🏻‍♂️ [송희범](https://github.com/heebeom-song)
-- 👮🏻‍♀️ [오지현](https://github.com/wlqgkrry)
+<table>
+  <tr>
+    <td>
+      <img src="https://avatars.githubusercontent.com/u/120161508?v=4" width="120px" height="120px"/>
+    </td>
+    <td>
+      <img src="https://avatars.githubusercontent.com/u/55120757?v=4" width="120px" height="120px"/>
+    </td>
+    <td>
+      <img src="https://avatars.githubusercontent.com/u/121949750?v=4" width="120px" height="120px"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/jonghoon-L">
+        이종훈
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/heebeom-song">
+        송희범
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/wlqgkrry">
+        오지현
+      </a>
+    </td>
+  </tr>
+</table>
