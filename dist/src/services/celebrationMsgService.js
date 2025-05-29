@@ -42,7 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMyCelebrationMsg = exports.putMyCelebrationMsg = exports.postMyCelebrationMsg = exports.getMyCelebrationMsg = exports.getAllCelebrationMsgs = void 0;
+exports.removeCelebrationMsgByAdmin = exports.deleteMyCelebrationMsg = exports.putMyCelebrationMsg = exports.postMyCelebrationMsg = exports.getMyCelebrationMsg = exports.getAllCelebrationMsgsForGuest = exports.getAllCelebrationMsgs = void 0;
 const celebrationMsgRepository = __importStar(require("../repositories/celebrationMsgRepository"));
 const error_1 = require("../utils/error");
 // 1. 전체 축하메세지 정보 조회 + get
@@ -71,6 +71,30 @@ const getAllCelebrationMsgs = (userId, page, size) => __awaiter(void 0, void 0, 
     }
 });
 exports.getAllCelebrationMsgs = getAllCelebrationMsgs;
+const getAllCelebrationMsgsForGuest = (userId, page, size) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // 시작 위치 계산
+        const offset = (page - 1) * size;
+        const limit = size;
+        // repo 호출
+        const allCelebrationMsgs = yield celebrationMsgRepository.findAllcelebrationMsgsForGuest(userId, offset, limit);
+        // 전체 데이터 개수 및 총 페이지 계산
+        const totalItems = yield celebrationMsgRepository.countCelebrationMsgsForGuest(userId);
+        const totalPages = Math.ceil(totalItems / size);
+        return {
+            allCelebrationMsgs,
+            totalItems,
+            totalPages,
+        };
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error
+            ? error.message
+            : "알 수 없는 오류가 발생했습니다.";
+        throw new Error(`모든 축하메세지 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`);
+    }
+});
+exports.getAllCelebrationMsgsForGuest = getAllCelebrationMsgsForGuest;
 // 2. 개인이 작성한 축하메세지 조회 + get
 const getMyCelebrationMsg = (id, name, password) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -129,3 +153,23 @@ const deleteMyCelebrationMsg = (id, name, password) => __awaiter(void 0, void 0,
     }
 });
 exports.deleteMyCelebrationMsg = deleteMyCelebrationMsg;
+// 6. 관리자 모드 포토톡 삭제 기능 + delete    // 토큰에서 userId 받아와서 일치하는 경우 -> 어드민 api 수행 -> 바로 삭제 가능하게
+const removeCelebrationMsgByAdmin = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(`관리자의 권한으로 축하메세지 정보 삭제 시도중입니다.. id : ${id}`);
+        const celebrationMsg = yield celebrationMsgRepository.removeCelebrationMsgByAdmin(id);
+        if (!celebrationMsg) {
+            console.log(`삭제할 축하메세지 정보가 없습니다. id : ${id}`);
+            return false;
+        }
+        console.log(`축하메세지 삭제에 성공했습니다. id : ${id}`);
+        return true;
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error
+            ? error.message
+            : "알 수 없는 오류가 발생했습니다.";
+        throw new Error(`관리자로 축하메세지 삭제에 실패했습니다. (id: ${id}) : ${errorMessage}`);
+    }
+});
+exports.removeCelebrationMsgByAdmin = removeCelebrationMsgByAdmin;

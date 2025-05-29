@@ -14,6 +14,8 @@ class Token extends sequelize_1.Model {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
                 unique: true,
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
             },
             token: {
                 type: sequelize_1.DataTypes.STRING(400),

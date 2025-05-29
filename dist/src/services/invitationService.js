@@ -41,44 +41,54 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getInvitationsByUserId = exports.deleteInvitation = exports.updateInvitation = exports.getInvitationById = exports.createInvitation = void 0;
 const invitationRepository = __importStar(require("../repositories/invitationRepository"));
 const error_1 = require("../utils/error");
+const invitation_1 = __importDefault(require("../models/invitation"));
+const models_1 = __importDefault(require("../models"));
 const createInvitation = (userId, invitationData, calendars, maps, galleries, accounts, contacts, notices) => __awaiter(void 0, void 0, void 0, function* () {
+    const transaction = yield models_1.default.sequelize.transaction();
     try {
-        const newInvitation = yield invitationRepository.createInvitation(Object.assign(Object.assign({}, invitationData), { userId }));
+        const newInvitation = yield invitationRepository.createInvitation(Object.assign(Object.assign({}, invitationData), { userId }), transaction);
         if (calendars && calendars.length > 0) { // 캘린더 정보가 들어오면 저장
             const calendarsWithInvitationId = calendars.map((calendar) => (Object.assign(Object.assign({}, calendar), { invitationId: newInvitation.id })));
-            yield invitationRepository.createCalendar(calendarsWithInvitationId);
+            yield invitationRepository.createCalendar(calendarsWithInvitationId, transaction);
         }
         if (maps && maps.length > 0) { // 지도, 교통수단 정보가 들어오면 저장
             const mapsWithInvitationId = maps.map((map) => (Object.assign(Object.assign({}, map), { invitationId: newInvitation.id })));
-            yield invitationRepository.createMap(mapsWithInvitationId);
+            yield invitationRepository.createMap(mapsWithInvitationId, transaction);
         }
         if (galleries && galleries.length > 0) { // 갤러리 정보가 들어오면 저장
             if (galleries.some(gallery => { var _a; return ((_a = gallery.images) !== null && _a !== void 0 ? _a : []).length > 9; })) {
                 throw new error_1.ClientError("갤러리의 이미지 개수는 최대 9개까지만 가능합니다.");
             }
             const galleriesWithInvitationId = galleries.map((gallery) => (Object.assign(Object.assign({}, gallery), { invitationId: newInvitation.id })));
-            yield invitationRepository.createGallery(galleriesWithInvitationId);
+            yield invitationRepository.createGallery(galleriesWithInvitationId, transaction);
         }
         if (accounts && accounts.length > 0) { // 계좌 정보가 들어오면 저장
             const accountsWithInvitationId = accounts.map((account) => (Object.assign(Object.assign({}, account), { invitationId: newInvitation.id })));
-            yield invitationRepository.createAccount(accountsWithInvitationId);
+            yield invitationRepository.createAccount(accountsWithInvitationId, transaction);
         }
         if (contacts && contacts.length > 0) { // 연락처 정보가 들어오면 저장
             const contactsWithInvitationId = contacts.map((contact) => (Object.assign(Object.assign({}, contact), { invitationId: newInvitation.id })));
-            yield invitationRepository.createContact(contactsWithInvitationId);
+            yield invitationRepository.createContact(contactsWithInvitationId, transaction);
         }
         if (notices && notices.length > 0) { // 공지사항 정보가 들어오면 저장
             const noticesWithInvitationId = notices.map((notice) => (Object.assign(Object.assign({}, notice), { invitationId: newInvitation.id })));
-            yield invitationRepository.createNotice(noticesWithInvitationId);
+            yield invitationRepository.createNotice(noticesWithInvitationId, transaction);
         }
+        yield transaction.commit();
         return { id: newInvitation.id };
     }
     catch (err) {
-        console.error('청첩장 등록 에러:', err.message);
+        if (transaction) {
+            yield transaction.rollback();
+            console.error('청첩장 등록 에러:', err.message);
+        }
         if (err instanceof error_1.ClientError) { // ClientError의 경우 따로 처리
             throw err;
         }
@@ -100,6 +110,14 @@ exports.getInvitationById = getInvitationById;
 const updateInvitation = (userId, invitationId, updatedData, calendars, maps, galleries, accounts, contacts, notices) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const invitation = yield invitationRepository.getInvitationById(invitationId);
+        // 필드 체크
+        const attributes = invitation_1.default.getAttributes();
+        const requiredFields = Object.keys(attributes).filter((field) => attributes[field].allowNull === true);
+        const missingFields = requiredFields.filter(field => !(field in updatedData));
+        if (missingFields.length > 0) {
+            throw new error_1.ValidationError(`청첩장 필수 값이 누락되었습니다: ${missingFields.join(', ')}`);
+        }
+        ;
         if (!invitation) {
             throw new Error('해당 청첩장이 없습니다');
         }
@@ -150,6 +168,9 @@ const updateInvitation = (userId, invitationId, updatedData, calendars, maps, ga
         return isUpdated;
     }
     catch (err) {
+        if (err instanceof error_1.ValidationError) {
+            throw err;
+        }
         console.error('청첩장 수정 에러:', err.message);
         throw new Error('청첩장 수정 에러');
     }

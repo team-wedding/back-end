@@ -52,7 +52,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(201).json({ message: '가입완료' });
             return;
         }
-        res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({ message: '중복된 이메일입니다.' });
+        res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({ message: '이미 해당 email로 회원가입된 이력있음.' });
         return;
     }
     catch (err) {

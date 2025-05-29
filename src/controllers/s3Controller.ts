@@ -113,7 +113,7 @@ export const deleteCelebrationMsgImageById = async (req: Request, res: Response)
     }
 
     if (!celebrationMsg.imageUrl) {
-      res.status(StatusCodes.OK).json({ message: "삭제할 이미지가 존재하지 않습니다." });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "삭제할 이미지가 존재하지 않습니다." });
       return;
     }
 

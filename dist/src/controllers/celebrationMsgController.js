@@ -42,7 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMyCelebrationMsg = exports.putMyCelebrationMsg = exports.postMyCelebrationMsg = exports.getMyCelebrationMsg = exports.getAllCelebrationMsgs = void 0;
+exports.deleteCelebrationMsgByAdmin = exports.deleteMyCelebrationMsg = exports.putMyCelebrationMsg = exports.postMyCelebrationMsg = exports.getMyCelebrationMsg = exports.getAllCelebrationMsgsForGuest = exports.getAllCelebrationMsgs = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const celebrationMsgService = __importStar(require("../services/celebrationMsgService"));
 const error_1 = require("../utils/error");
@@ -72,6 +72,30 @@ const getAllCelebrationMsgs = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getAllCelebrationMsgs = getAllCelebrationMsgs;
+// 1-1. 전체 축하메세지 조회(하객용) + get
+const getAllCelebrationMsgsForGuest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            res
+                .status(http_status_codes_1.StatusCodes.BAD_REQUEST)
+                .json({ message: "userId가 존재하지 않습니다. (잘못된 요청)" });
+            return;
+        }
+        // 페이지네이션 파라미터 받기
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+        const { allCelebrationMsgs, totalItems, totalPages } = yield celebrationMsgService.getAllCelebrationMsgsForGuest(id, page, size);
+        res
+            .status(http_status_codes_1.StatusCodes.OK)
+            .json({ allCelebrationMsgs, totalItems, totalPages, currentPage: page });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "서버 에러" });
+    }
+});
+exports.getAllCelebrationMsgsForGuest = getAllCelebrationMsgsForGuest;
 // 2. 개인이 작성한 축하메세지 조회 + get
 const getMyCelebrationMsg = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -179,3 +203,31 @@ const deleteMyCelebrationMsg = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.deleteMyCelebrationMsg = deleteMyCelebrationMsg;
+// 관리자 모드 포토톡 삭제 기능 + delete
+const deleteCelebrationMsgByAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userInfo = req.userInfo;
+        if (!userInfo) {
+            res
+                .status(http_status_codes_1.StatusCodes.UNAUTHORIZED)
+                .json({ message: "로그인이 필요합니다." });
+            return;
+        }
+        const { id } = req.params;
+        const isDeleted = yield celebrationMsgService.removeCelebrationMsgByAdmin(Number(id));
+        if (!isDeleted) {
+            res
+                .status(404)
+                .json({ message: "삭제할 축하메세지를 찾을 수 없습니다." });
+            return;
+        }
+        res
+            .status(200)
+            .json({ message: "축하메세지가 성공적으로 삭제되었습니다." });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({ message: "서버 에러" });
+    }
+});
+exports.deleteCelebrationMsgByAdmin = deleteCelebrationMsgByAdmin;
