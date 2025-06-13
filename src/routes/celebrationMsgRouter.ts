@@ -124,12 +124,15 @@ import { authToken } from "../middlewares/authToken";
  *               - name
  *               - password
  *               - content
+ *               - imageUrl
  *             properties:
  *               name:
  *                 type: string
  *               password:
  *                 type: string
  *               content:
+ *                 type: string
+ *               imageUrl:
  *                 type: string
  *     responses:
  *       200:
