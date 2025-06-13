@@ -160,14 +160,15 @@ export const putMyCelebrationMsg = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, password, message } = req.body;
+    const { name, password, message, imageUrl } = req.body;
 
     const updatedcelebrationMsg =
       await celebrationMsgService.putMyCelebrationMsg(
         id,
         name,
         password,
-        message
+        message,
+        imageUrl
       );
 
     if (updatedcelebrationMsg) {

@@ -1,6 +1,7 @@
 import * as celebrationMsgRepository from "../repositories/celebrationMsgRepository";
 import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
 import { ClientError } from "../utils/error";
+import { deleteImageFromS3, extractS3KeyFromUrl } from "../utils/s3";
 
 // 1. 전체 축하메세지 정보 조회 + get
 export const getAllCelebrationMsgs = async (
@@ -138,14 +139,42 @@ export const putMyCelebrationMsg = async (
   id: number,
   name: string,
   password: string,
-  newMessage: string
+  newMessage: string,
+  newImageUrl: string[]
 ) => {
   try {
+    const celebrationMsg = await celebrationMsgRepository.findMyCelebrationMsgByPassword(id, name, password);
+
+    if(!celebrationMsg) {
+      throw new Error("해당 축하메세지가 존재하지 않습니다.");
+    }
+
+    const prevImages: string[] = Array.isArray(celebrationMsg.imageUrl)
+      ? celebrationMsg.imageUrl
+      : JSON.parse(celebrationMsg.imageUrl || "[]");
+
+    const deletedImages = prevImages.filter(
+      (url: string) => !newImageUrl.includes(url)
+    );
+
+    for (const url of deletedImages) {
+      const key = extractS3KeyFromUrl(url);
+      if (key) {
+        try {
+          await deleteImageFromS3(key);
+          console.log(`삭제 성공: ${key}`);
+        } catch (err: any) {
+          console.error(`S3 삭제 실패 (${key}):`, err.message);
+        }
+      }
+    }
+
     return await celebrationMsgRepository.updateCelebrationMsgByPassword(
       id,
       name,
       password,
-      newMessage
+      newMessage,
+      newImageUrl
     );
   } catch (error: unknown) {
     const errorMessage =
