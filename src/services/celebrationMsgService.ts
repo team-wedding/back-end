@@ -143,32 +143,6 @@ export const putMyCelebrationMsg = async (
   newImageUrl: string[]
 ) => {
   try {
-    const celebrationMsg = await celebrationMsgRepository.findMyCelebrationMsgByPassword(id, name, password);
-
-    if(!celebrationMsg) {
-      throw new Error("해당 축하메세지가 존재하지 않습니다.");
-    }
-
-    const prevImages: string[] = Array.isArray(celebrationMsg.imageUrl)
-      ? celebrationMsg.imageUrl
-      : JSON.parse(celebrationMsg.imageUrl || "[]");
-
-    const deletedImages = prevImages.filter(
-      (url: string) => !newImageUrl.includes(url)
-    );
-
-    for (const url of deletedImages) {
-      const key = extractS3KeyFromUrl(url);
-      if (key) {
-        try {
-          await deleteImageFromS3(key);
-          console.log(`삭제 성공: ${key}`);
-        } catch (err: any) {
-          console.error(`S3 삭제 실패 (${key}):`, err.message);
-        }
-      }
-    }
-
     return await celebrationMsgRepository.updateCelebrationMsgByPassword(
       id,
       name,
