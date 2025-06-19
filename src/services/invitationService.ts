@@ -9,6 +9,7 @@ import { NoticeData } from '../interfaces/notice.interface';
 import { ClientError, ValidationError } from '../utils/error';
 import Invitation from '../models/invitation';
 import db from '../models'
+import { deleteImageFromS3, extractS3KeyFromUrl } from '../utils/s3';
 
 type UpdateInvitation = Partial<Omit<InvitationData, 'id' | 'userId'>>;
 
@@ -123,6 +124,90 @@ export const updateInvitation = async ( userId: number, invitationId: number, up
 
     if (invitation.userId !== userId) {
       throw new Error('권한이 없어 수정할 수 없습니다');
+    }
+    
+    // db에서 조회 후 이미지 삭제
+    // 1: 대표이미지
+    if(invitation.imgUrl && invitation.imgUrl !== updatedData.imgUrl) {
+      const prevKey = extractS3KeyFromUrl(invitation.imgUrl);
+      if(prevKey) {
+        try {
+          await deleteImageFromS3(prevKey);
+          console.log("대표 이미지 삭제 성공:", prevKey);
+        } catch (err) {
+          console.warn("대표 이미지 삭제 실패:", prevKey, (err as Error).message);
+        }
+      }
+    }
+
+    // 2: 갤러리 이미지
+    if (invitation.galleries && Array.isArray(galleries)) {
+      const prevGalleryUrls: string[] = [];
+
+      // DB에서 꺼낸 이전 이미지 URL 리스트 추출
+      invitation.galleries.forEach((gallery: any) => {
+        if (typeof gallery.images === "string") {
+          try {
+            const parsed = JSON.parse(gallery.images);
+            if (Array.isArray(parsed)) {
+              prevGalleryUrls.push(...parsed);
+            }
+          } catch (err) {
+            console.warn("DB 갤러리 images 파싱 실패:", gallery.images);
+          }
+        } else if (Array.isArray(gallery.images)) {
+          // 혹시 sequelize에서 배열로 나오는 경우
+          prevGalleryUrls.push(...gallery.images);
+          }
+      });
+
+      // 프론트에서 전달받은 최신 이미지 URL 리스트 추출
+      const updatedGalleryUrls: string[] = [];
+
+      galleries.forEach((gallery: any) => {
+        if (Array.isArray(gallery.images)) {
+          updatedGalleryUrls.push(...gallery.images);
+        }
+      });
+
+      // 삭제 대상 이미지 URL 계산
+      const deletedGalleryUrls = prevGalleryUrls.filter(
+        (prevUrl) => !updatedGalleryUrls.includes(prevUrl)
+      );
+
+      // 삭제 실행
+      for (const url of deletedGalleryUrls) {
+        const key = extractS3KeyFromUrl(url);
+        if (key) {
+         try {
+          await deleteImageFromS3(key);
+          console.log("갤러리 이미지 삭제 성공:", key);
+          } catch (err) {
+            console.error("갤러리 이미지 삭제 실패:", key, (err as Error).message);
+          }
+        } else {
+          console.warn("S3 key 추출 실패 (갤러리):", url);
+        }
+      }
+    }
+
+    // 3: 공지사항 이미지
+    if (invitation.notices && notices) {
+      const prevNoticeUrls = invitation.notices.map((n: any) => n.image);
+      const updatedNoticeUrls = notices.map((n: any) => n.image);
+
+      const deletedNoticeUrls = prevNoticeUrls.filter((url: string) => !updatedNoticeUrls.includes(url));
+      for (const url of deletedNoticeUrls) {
+        const key = extractS3KeyFromUrl(url);
+        if (key) {
+          try {
+            await deleteImageFromS3(key);
+            console.log("공지사항 이미지 삭제 성공:", key);
+          } catch (err) {
+            console.warn("공지사항 이미지 삭제 실패:", key, (err as Error).message);
+          }
+        }
+      }
     }
 
     let isUpdated = false;

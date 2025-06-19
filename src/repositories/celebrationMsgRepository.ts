@@ -139,7 +139,8 @@ export const updateCelebrationMsgByPassword = async (
   id: number,
   name: string,
   password: string,
-  newMessage: string
+  newMessage: string,
+  imageUrl: string[]
 ): Promise<CelebrationMsg | null> => {
   try {
     console.log(
@@ -154,16 +155,18 @@ export const updateCelebrationMsgByPassword = async (
       celebrationMsg.message = newMessage;
       celebrationMsg.name = name;
       celebrationMsg.password = password;
+      celebrationMsg.imageUrl = imageUrl;
+
       const updatedCelebrationMsg = await celebrationMsg.save();
 
       console.log(
-        `다음 이름과 비밀번호로 기록된 축하메세지 정보가 성공적으로 수정되었습니다. id : ${id}, name : ${name}, password : ${password}.`
+        `다음 이름과 비밀번호로 기록된 축하메세지 정보가 성공적으로 수정되었습니다. id : ${id}, name : ${name}, password : ${password}, imageUrl : ${imageUrl}.`
       );
 
       return updatedCelebrationMsg;
     } else {
       console.log(
-        `입력된 아이디, 이름, 비밀번호에 만족하는 축하메세지가 존재하지 않습니다. id : ${id} name : ${name}, passoword : ${password}`
+        `입력된 아이디, 이름, 비밀번호에 만족하는 축하메세지가 존재하지 않습니다. id : ${id} name : ${name}, passoword : ${password}, imageUrl : ${imageUrl}`
       );
       return null;
     }
