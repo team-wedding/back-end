@@ -1,8 +1,6 @@
 import AWS from 'aws-sdk';
 import multer from 'multer';
-import multers3 from 'multer-s3';
 import path from 'path';
-import { Request} from "express";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -15,23 +13,36 @@ AWS.config.update({ // AWS 설정
 
 const allowedExtensions = ['.png', '.jpg', '.JPG', '.PNG', '.jpeg', '.JPEG', '.bmp', '.BMP'];
 
-const imageUploader = multer({ // multer 설정
-    storage: multers3({
-        s3: new AWS.S3() as any,
-        bucket: process.env.AWS_BUCKET_NAME as string, // 업로드할 버킷 이름
-        key: (req:Request, file, callback) => {
-            const uploadDirectory = req.query.directory ?? 'uploads';
-            const extension = path.extname(file.originalname);
-            if (!allowedExtensions.includes(extension)) {
-                return callback(new Error('wrong extension'));
-            }
-            callback(null, `${uploadDirectory}/${Date.now()}_${file.originalname}`); // 저장될 S3의 저장소 경로 설정
-        },
-        acl: 'public-read-write',
-    }),
+const s3 = new AWS.S3();
+
+export const imageUploader = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase();
+    if (!allowedExtensions.includes(extension)) {
+      return cb(new Error('허용되지 않은 이미지 형식입니다.'));
+    }
+    cb(null, true);
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
 });
 
-const s3 = new AWS.S3();
+export const uploadBufferToS3 = async ( buffer: Buffer, key: string, mimetype: string ): Promise<string> => {
+  const bucket = process.env.AWS_BUCKET_NAME!;
+
+  await s3.putObject({
+      Bucket: bucket,
+      Key: key,
+      Body: buffer,
+      ContentType: mimetype,
+      ACL: 'public-read',
+    }).promise();
+
+  return `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
+};
 
 export const deleteImageFromS3 = async (key: string): Promise<void> => { // 이미지 삭제
     const bucket = process.env.AWS_BUCKET_NAME as string;
@@ -52,7 +63,7 @@ export const deleteImageFromS3 = async (key: string): Promise<void> => { // 이�
     } catch (err: any) {
       throw new Error('S3 삭제 중 오류 발생: ' + err.message);
     }
-  };
+};
 
 export const extractS3KeyFromUrl = (url: string): string | null => { // url 값 추출
   try {
@@ -62,5 +73,3 @@ export const extractS3KeyFromUrl = (url: string): string | null => { // url 값 
     return null;
   }
 };
-  
-export default imageUploader;

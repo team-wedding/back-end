@@ -1,9 +1,10 @@
 import { Request, Response, RequestHandler } from "express";
 import { StatusCodes } from "http-status-codes";
-import { deleteImageFromS3 } from "../utils/s3";
+import { deleteImageFromS3, uploadBufferToS3 } from "../utils/s3";
 import { extractS3KeyFromUrl } from "../utils/s3";
 import { getInvitationById } from "../repositories/invitationRepository";
 import db from '../models';
+import sharp from "sharp";
 
 export const postImage: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -14,9 +15,24 @@ export const postImage: RequestHandler = async (req: Request, res: Response): Pr
       return;
     }
 
-    const imageUrls = files.map(file => file.location); // 이미지가 저장된 경로 반환
+    const uploadDirectory = (req.query.directory as string) || 'uploads';
+    const resizedImageUrls: string[] = [];
 
-    res.status(StatusCodes.OK).json({ imageUrls });
+    for (const file of files) {
+      const baseName = `${Date.now()}_${file.originalname}`;
+      const key = `${uploadDirectory}/${baseName}`;
+
+      // 리사이즈 크기 및 포맷 지정
+      const resizedBuffer = await sharp(file.buffer)
+        .resize({ width: 450 })
+        .toFormat('webp')
+        .toBuffer();
+
+      const uploadedUrl = await uploadBufferToS3(resizedBuffer, `${key}.webp`, 'image/webp');
+      resizedImageUrls.push(uploadedUrl);
+    }
+
+    res.status(StatusCodes.OK).json({ imageUrls: resizedImageUrls });
   } catch (error) {
     console.error("이미지 업로드 오류:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "서버 에러" });
