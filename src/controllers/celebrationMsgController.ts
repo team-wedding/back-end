@@ -220,7 +220,7 @@ export const deleteMyCelebrationMsg = async (
   }
 };
 
-// 관리자 모드 포토톡 삭제 기능 + delete
+// 5-1. 관리자 모드 포토톡 삭제 기능 + delete
 export const deleteCelebrationMsgByAdmin = async (
   req: Request<{ id: string }>,
   res: Response
@@ -257,3 +257,73 @@ export const deleteCelebrationMsgByAdmin = async (
       .json({ message: "서버 에러" });
   }
 };
+
+// 6. 전체 축하메세지 이미지 조회(관리자용) + get
+export const getAllCelebrationMsgImages = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userInfo: IUser = req.userInfo;
+    const userId = userInfo.id as number;
+
+    if (!userInfo) {
+      res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: "userInfo가 존재하지 않습니다. 인증 실패" });
+      return;
+    }
+
+    const page = parseInt(req.query.page as string);
+    const size = parseInt(req.query.size as string);
+
+    const { imageUrls, totalItems, totalPages } =
+      await celebrationMsgService.getAllCelebrationMsgImages(userId, page, size);
+
+    res.status(StatusCodes.OK).json({
+      imageUrls,
+      totalItems,
+      totalPages,
+      currentPage: page,
+    });
+  } catch (err: any) {
+    console.error(err);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
+  }
+};
+
+// 6-1. 전체 축하메세지 이미지 조회(하객용) + get
+export const getAllCelebrationMsgImagesForGuest = async (
+  req: Request<{ id: number }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "userId가 존재하지 않습니다. (잘못된 요청)" });
+      return;
+    }
+
+    // 페이지네이션 파라미터 받기
+    const page = parseInt(req.query.page as string);
+    const size = parseInt(req.query.size as string);
+
+    const { imageUrls, totalItems, totalPages } =
+      await celebrationMsgService.getAllCelebrationMsgImagesForGuest(id, page, size);
+
+    res
+      .status(StatusCodes.OK)
+      .json({ imageUrls, totalItems, totalPages, currentPage: page });
+  } catch (err: any) {
+    console.error(err);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "서버 에러" });
+  }
+};
+

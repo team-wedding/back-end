@@ -1,7 +1,6 @@
 import * as celebrationMsgRepository from "../repositories/celebrationMsgRepository";
 import { celebrationMsgData } from "../interfaces/celebrationMsg.interface";
 import { ClientError } from "../utils/error";
-import { deleteImageFromS3, extractS3KeyFromUrl } from "../utils/s3";
 
 // 1. 전체 축하메세지 정보 조회 + get
 export const getAllCelebrationMsgs = async (
@@ -46,6 +45,7 @@ export const getAllCelebrationMsgs = async (
   }
 };
 
+// 1-1. 전체 축하메세지 정보 조회(하객용) + get
 export const getAllCelebrationMsgsForGuest = async (
   userId: number,
   page: number,
@@ -213,3 +213,102 @@ export const removeCelebrationMsgByAdmin = async (
     );
   }
 };
+
+// 7. 전체 축하메세지 이미지 조회(관리자용) + get
+export const getAllCelebrationMsgImages = async (
+  userId: number,
+  page: number,
+  size: number
+) => {
+  try {
+    const offset = (page - 1) * size;
+    const limit = size;
+
+    const allCelebrationMsgs =
+      await celebrationMsgRepository.findAllcelebrationMsgs(userId, offset, limit);
+
+    const totalItems = await celebrationMsgRepository.countCelebrationMsgs(userId);
+    const totalPages = Math.ceil(totalItems / size);
+
+    // 이미지 URL만 추출
+    const imageUrls = allCelebrationMsgs.flatMap((msg) => {
+      try {
+        const parsed = JSON.parse(msg.imageUrl as unknown as string); 
+        if (Array.isArray(parsed)) {
+          return parsed.filter((url: any) => typeof url === 'string' && url.trim() !== '');
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    });
+
+    return {
+      imageUrls,
+      totalItems,
+      totalPages,
+    };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+    throw new Error(
+      `이미지 URL 목록 불러오기 실패: ${errorMessage}`
+    );
+  }
+};
+
+// 7-1. 전체 축하메세지 이미지 조회(하객용) + get
+export const getAllCelebrationMsgImagesForGuest = async (
+  userId: number,
+  page: number,
+  size: number
+) => {
+  try {
+    // 시작 위치 계산
+    const offset = (page - 1) * size;
+    const limit = size;
+
+    // repo 호출
+    const allCelebrationMsgs =
+      await celebrationMsgRepository.findAllcelebrationMsgsForGuest(
+        userId,
+        offset,
+        limit
+      );
+
+    // 전체 데이터 개수 및 총 페이지 계산
+    const totalItems = await celebrationMsgRepository.countCelebrationMsgsForGuest(
+      userId
+    );
+    const totalPages = Math.ceil(totalItems / size);
+
+    // 이미지 URL 추출
+    const imageUrls = allCelebrationMsgs.flatMap((msg) => {
+      try {
+        const parsed = JSON.parse(msg.imageUrl as unknown as string);
+        if (Array.isArray(parsed)) {
+          return parsed.filter((url: any) => typeof url === 'string' && url.trim() !== '');
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    });
+
+    return {
+      imageUrls,
+      totalItems,
+      totalPages,
+    };
+
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 오류가 발생했습니다.";
+    throw new Error(
+      `모든 축하메세지 정보 기록을 불러오는 것에 실패했습니다. : ${errorMessage}`
+    );
+  }
+};
+
