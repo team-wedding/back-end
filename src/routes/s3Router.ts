@@ -1,6 +1,6 @@
 import express from 'express';
 import { postImage, deleteInvitationImageById, deleteCelebrationMsgImageById } from '../controllers/s3Controller';
-import imageUploader from '../utils/s3';
+import { imageUploader } from '../utils/s3';
 
 /**
  * @openapi
