@@ -314,3 +314,18 @@ export const getInvitationsByUserId = async ( userId: number ): Promise<Invitati
     throw new Error('청첩장 조회 에러');
   }
 };
+
+
+export const getInvitationWithCredential = async (
+  req: RequestType<typeof invitationRepository.getInvitationWithCredential>
+): Promise<InvitationData | null> => {
+  try {
+    const invitation = await invitationRepository.getInvitationWithCredential(
+      req
+    );
+    return invitation || null;
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error("청첩장 조회 에러:", err.message);
+    throw new Error("청첩장 조회 에러");
+  }
+};
