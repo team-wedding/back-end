@@ -68,7 +68,7 @@ export const getInvitationCredential: RequestHandler = async (
 ): Promise<void> => {
   try {
     const userInfo: IUser = req.userInfo;
-    if(!userInfo){
+    if(!userInfo || !userInfo.id){
       res
       .status(StatusCodes.UNAUTHORIZED)
       .json({ message: "허용되지않는 접근입니다 토큰 필요" });

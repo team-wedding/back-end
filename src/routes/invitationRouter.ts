@@ -455,7 +455,7 @@ router.get('/', authToken, getInvitations);
 router.get('/:id', (req: Request<Params>, res: Response, next: NextFunction) => {
     getInvitation(req, res, next);
 });
-router.get('/:id/credential', (req: Request<Params>, res: Response, next: NextFunction) => {
+router.get('/:id/credential',authToken, (req: Request<Params>, res: Response, next: NextFunction) => {
     getInvitationCredential(req, res, next);
 });
 router.put('/:id', authToken, (req: Request<Params>, res: Response, next: NextFunction) => {
