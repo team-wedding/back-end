@@ -168,6 +168,55 @@ export const getInvitationsByUserId = async (userId: number) => {
   }
 };
 
+export const getInvitationWithCredential = async ({
+  userId,
+  invitationId,
+}: {
+  userId: number;
+  invitationId: number;
+}) => {
+  try {
+    return await db.Invitation.findOne({
+      where: { userId, id: invitationId },
+      include: [
+        {
+          model: db.Calendar,
+          as: "calendars",
+          required: false,
+        },
+        {
+          model: db.Map,
+          as: "maps",
+          required: false,
+        },
+        {
+          model: db.Gallery,
+          as: "galleries",
+          required: false,
+        },
+        {
+          model: db.Account,
+          as: "accounts",
+          required: false,
+        },
+        {
+          model: db.Contact,
+          as: "contacts",
+          required: false,
+        },
+        {
+          model: db.Notice,
+          as: "notices",
+          required: false,
+        },
+      ],
+    });
+  } catch (err) {
+    throw new Error(`청첩장 조회 에러: ${(err as Error).message}`);
+  }
+};
+
+
 export const updateInvitation = async (invitationId: number, updatedData: Partial<InvitationData>) => {
   try {
     const [affectedRows] = await db.Invitation.update(updatedData, {

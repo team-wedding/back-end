@@ -61,6 +61,37 @@ export const getInvitation: RequestHandler = async (req: Request, res: Response,
     }
 };
 
+export const getInvitationCredential: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userInfo: IUser = req.userInfo;
+    if(!userInfo || !userInfo.id){
+      res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: "허용되지않는 접근입니다 토큰 필요" });
+      return;
+    }
+    const invitationId: number = validateIdParam(req.params.id);
+    const invitation = await invitationService.getInvitationWithCredential({
+      userId: userInfo.id as number,
+      invitationId,
+    });
+    if (invitation) {
+      res.status(StatusCodes.OK).json(invitation);
+      return;
+    }
+    res.status(StatusCodes.OK).json([]);
+  } catch (err) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: "해당 청첩장이 없습니다" });
+    next(err);
+  }
+};
+
 export const putInvitation: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const invitationId: number = validateIdParam(req.params.id);

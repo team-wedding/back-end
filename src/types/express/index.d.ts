@@ -1,5 +1,5 @@
-import { Request } from 'express';
-import { User as IUser } from '../../interfaces/user.interface';
+import { Request } from "express";
+import { User as IUser } from "../../interfaces/user.interface";
 
 declare global {
   namespace Express {
@@ -8,4 +8,8 @@ declare global {
       userId: number;
     }
   }
+
+  type RequestType<T> = T extends (arg: infer R, ...args: any[]) => any
+    ? R
+    : never;
 }
